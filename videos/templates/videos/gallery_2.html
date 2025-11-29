@@ -1,0 +1,994 @@
+<!-- templates/videos/gallery.html -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VideoStream - Galeria</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #141414;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: linear-gradient(180deg, rgba(20, 20, 20, 0.95) 0%, rgba(20, 20, 20, 0) 100%);
+            backdrop-filter: blur(10px);
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            transition: background 0.3s ease;
+        }
+
+        .header.scrolled {
+            background: rgba(20, 20, 20, 0.98);
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 700;
+            color: #e50914;
+            letter-spacing: -1px;
+            text-shadow: 0 0 20px rgba(229, 9, 20, 0.5);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .username {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        .btn-settings {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-settings:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: rotate(90deg);
+        }
+
+        .btn-logout {
+            padding: 8px 20px;
+            background: rgba(229, 9, 20, 0.8);
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background: #e50914;
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 100px 50px 50px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        /* Video Grid */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+
+        .video-card {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #2a2a2a;
+        }
+
+        .video-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            z-index: 10;
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            height: 160px;
+            background: linear-gradient(135deg, #434343 0%, #2a2a2a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .video-info {
+            padding: 15px;
+        }
+
+        .video-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .video-meta {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 10px;
+        }
+
+        .video-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-play, .btn-delete {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-play {
+            background: #fff;
+            color: #000;
+            flex: 1;
+        }
+
+        .btn-play:hover {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .btn-delete {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .btn-delete:hover {
+            background: rgba(229, 9, 20, 0.8);
+        }
+
+        /* Video Player Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            position: relative;
+            width: 90%;
+            max-width: 1200px;
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .btn-close {
+            position: absolute;
+            top: -50px;
+            right: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-close:hover {
+            background: rgba(229, 9, 20, 0.8);
+            transform: rotate(90deg);
+        }
+
+        video {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Confirmation Dialog */
+        .confirm-dialog {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(30, 30, 30, 0.98);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+            z-index: 2000;
+            min-width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            animation: slideUp 0.3s ease;
+        }
+
+        .confirm-dialog.active {
+            display: block;
+        }
+
+        .confirm-dialog h3 {
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .confirm-dialog p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .confirm-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .btn-confirm, .btn-cancel {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-confirm {
+            background: #e50914;
+            color: #fff;
+        }
+
+        .btn-confirm:hover {
+            background: #b20710;
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1999;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .empty-state svg {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+
+            .main-content {
+                padding: 80px 20px 30px;
+            }
+
+            .video-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 15px;
+            }
+
+            .confirm-dialog {
+                min-width: 320px;
+                margin: 0 20px;
+            }
+
+            .settings-panel {
+                width: 95%;
+                max-width: none;
+            }
+        }
+
+        /* Settings Panel */
+        .settings-panel {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(20, 20, 20, 0.98);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            z-index: 2000;
+            min-width: 500px;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            animation: slideUp 0.3s ease;
+        }
+
+        .settings-panel.active {
+            display: block;
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .settings-header h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .btn-close-settings {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-close-settings:hover {
+            background: rgba(229, 9, 20, 0.8);
+            transform: rotate(90deg);
+        }
+
+        .storage-section {
+            margin-bottom: 30px;
+        }
+
+        .storage-label {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .storage-stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 10px;
+        }
+
+        .stat-item {
+            flex: 1;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .stat-unit {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-left: 4px;
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 8px;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #e50914 0%, #ff4757 100%);
+            border-radius: 6px;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent
+            );
+            animation: shimmer-progress 2s infinite;
+        }
+
+        @keyframes shimmer-progress {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-text {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+        }
+
+        /* Circular Progress */
+        .circular-progress {
+            width: 150px;
+            height: 150px;
+            margin: 20px auto;
+            position: relative;
+        }
+
+        .circular-progress svg {
+            transform: rotate(-90deg);
+        }
+
+        .circular-progress-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.1);
+            stroke-width: 10;
+        }
+
+        .circular-progress-bar {
+            fill: none;
+            stroke: url(#gradient);
+            stroke-width: 10;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .circular-progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .circular-progress-percent {
+            font-size: 32px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .circular-progress-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Upgrade Section */
+        .upgrade-section {
+            background: rgba(229, 9, 20, 0.1);
+            border: 1px solid rgba(229, 9, 20, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .upgrade-section h3 {
+            font-size: 18px;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .upgrade-section p {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 15px;
+        }
+
+        .btn-upgrade {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #e50914 0%, #b20710 100%);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-upgrade:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(229, 9, 20, 0.4);
+        }
+
+        /* Loading spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">VideoStream</div>
+        <div class="user-menu">
+            <span class="username">👤 {{ user.username }}</span>
+            <button class="btn-settings" onclick="openSettings()">⚙️</button>
+            <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn-logout">Sair</button>
+            </form>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <h2 class="section-title">Seus Vídeos</h2>
+        
+        {% if videos %}
+        <div class="video-grid">
+            {% for video in videos %}
+            <div class="video-card" data-video-id="{{ video.id }}">
+                <div class="video-thumbnail">🎬</div>
+                <div class="video-info">
+                    <div class="video-title">Vídeo #{{ video.id }}</div>
+                    <div class="video-meta">
+                        {{ video.created_at|date:"d/m/Y H:i" }} • 
+                        {% widthratio video.duration.total_seconds 60 1 %} min
+                    </div>
+                    <div class="video-actions">
+                        <button class="btn-play" onclick="playVideo({{ video.id }})">
+                            ▶ Assistir
+                        </button>
+                        <button class="btn-delete" onclick="confirmDelete({{ video.id }})">
+                            🗑
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8,5.14V19.14L19,12.14L8,5.14Z" />
+            </svg>
+            <h3>Nenhum vídeo disponível</h3>
+            <p>Faça upload de vídeos pela API para começar.</p>
+        </div>
+        {% endif %}
+    </main>
+
+    <!-- Video Player Modal -->
+    <div class="modal" id="videoModal">
+        <div class="modal-content">
+            <button class="btn-close" onclick="closeVideo()">✕</button>
+            <video id="videoPlayer" controls></video>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation -->
+    <div class="overlay" id="overlay"></div>
+    <div class="confirm-dialog" id="confirmDialog">
+        <h3>Confirmar exclusão</h3>
+        <p>Tem certeza que deseja excluir este vídeo? Esta ação não pode ser desfeita.</p>
+        <div class="confirm-actions">
+            <button class="btn-cancel" onclick="cancelDelete()">Cancelar</button>
+            <button class="btn-confirm" onclick="executeDelete()">Excluir</button>
+        </div>
+    </div>
+
+    <!-- Settings Panel -->
+    <div class="settings-panel" id="settingsPanel">
+        <div class="settings-header">
+            <h2>Configurações</h2>
+            <button class="btn-close-settings" onclick="closeSettings()">✕</button>
+        </div>
+
+        <div class="storage-section">
+            <div class="storage-label">
+                <span>Armazenamento do Servidor</span>
+                <span id="loadingIndicator" style="display: none;">
+                    <span class="loading-spinner"></span>
+                </span>
+            </div>
+
+            <!-- Circular Progress -->
+            <div class="circular-progress">
+                <svg width="150" height="150">
+                    <defs>
+                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#e50914;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#ff4757;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <circle class="circular-progress-bg" cx="75" cy="75" r="65"></circle>
+                    <circle 
+                        class="circular-progress-bar" 
+                        cx="75" 
+                        cy="75" 
+                        r="65"
+                        id="progressCircle"
+                        stroke-dasharray="408.407"
+                        stroke-dashoffset="408.407">
+                    </circle>
+                </svg>
+                <div class="circular-progress-text">
+                    <div class="circular-progress-percent" id="percentText">0%</div>
+                    <div class="circular-progress-label">Utilizado</div>
+                </div>
+            </div>
+
+            <!-- Storage Stats -->
+            <div class="storage-stats">
+                <div class="stat-item">
+                    <div class="stat-label">Total</div>
+                    <div class="stat-value">
+                        <span id="totalStorage">--</span>
+                        <span class="stat-unit">GB</span>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Usado</div>
+                    <div class="stat-value">
+                        <span id="usedStorage">--</span>
+                        <span class="stat-unit">GB</span>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Disponível</div>
+                    <div class="stat-value">
+                        <span id="freeStorage">--</span>
+                        <span class="stat-unit">GB</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+            </div>
+            <div class="progress-text">
+                <span id="videosStorage">0 GB</span> usados por vídeos
+            </div>
+        </div>
+
+        <!-- Upgrade Section -->
+        <div class="upgrade-section">
+            <h3>💎 Plano Premium</h3>
+            <p>Aumente seu armazenamento e tenha acesso a recursos exclusivos</p>
+            <button class="btn-upgrade" onclick="upgradeStorage()">Aumentar Plano</button>
+        </div>
+    </div>
+
+    <script>
+        let videoToDelete = null;
+        let storageData = null;
+
+        // Scroll effect on header
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Open settings panel
+        async function openSettings() {
+            const panel = document.getElementById('settingsPanel');
+            const overlay = document.getElementById('overlay');
+            
+            panel.classList.add('active');
+            overlay.classList.add('active');
+            
+            // Load storage info
+            await loadStorageInfo();
+        }
+
+        // Close settings panel
+        function closeSettings() {
+            const panel = document.getElementById('settingsPanel');
+            const overlay = document.getElementById('overlay');
+            
+            panel.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+
+        // Load storage information
+        async function loadStorageInfo() {
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            loadingIndicator.style.display = 'inline-block';
+
+            try {
+                const response = await fetch('/storage/info/');
+                const data = await response.json();
+
+                if (data.success) {
+                    storageData = data.storage;
+                    updateStorageUI(storageData);
+                } else {
+                    console.error('Error loading storage info:', data.error);
+                }
+            } catch (error) {
+                console.error('Error fetching storage info:', error);
+            } finally {
+                loadingIndicator.style.display = 'none';
+            }
+        }
+
+        // Update storage UI
+        function updateStorageUI(storage) {
+            // Update text values
+            document.getElementById('totalStorage').textContent = storage.total_gb;
+            document.getElementById('usedStorage').textContent = storage.used_gb;
+            document.getElementById('freeStorage').textContent = storage.free_gb;
+            document.getElementById('videosStorage').textContent = storage.videos_size_gb;
+            document.getElementById('percentText').textContent = Math.round(storage.percent_used) + '%';
+
+            // Update progress bar
+            const progressBar = document.getElementById('progressBar');
+            setTimeout(() => {
+                progressBar.style.width = storage.percent_used + '%';
+            }, 100);
+
+            // Update circular progress
+            const circle = document.getElementById('progressCircle');
+            const circumference = 408.407; // 2 * PI * 65
+            const offset = circumference - (storage.percent_used / 100) * circumference;
+            
+            setTimeout(() => {
+                circle.style.strokeDashoffset = offset;
+            }, 100);
+        }
+
+        // Upgrade storage
+        function upgradeStorage() {
+            alert('🚀 Em breve! Funcionalidade de upgrade estará disponível em breve.');
+        }
+
+        // Play video
+        function playVideo(videoId) {
+            const modal = document.getElementById('videoModal');
+            const player = document.getElementById('videoPlayer');
+            
+            player.src = `/video/${videoId}/stream/`;
+            modal.classList.add('active');
+            player.play();
+        }
+
+        // Close video
+        function closeVideo() {
+            const modal = document.getElementById('videoModal');
+            const player = document.getElementById('videoPlayer');
+            
+            player.pause();
+            player.src = '';
+            modal.classList.remove('active');
+        }
+
+        // Confirm delete
+        function confirmDelete(videoId) {
+            videoToDelete = videoId;
+            document.getElementById('overlay').classList.add('active');
+            document.getElementById('confirmDialog').classList.add('active');
+        }
+
+        // Cancel delete
+        function cancelDelete() {
+            videoToDelete = null;
+            document.getElementById('overlay').classList.remove('active');
+            document.getElementById('confirmDialog').classList.remove('active');
+        }
+
+        // Execute delete
+        async function executeDelete() {
+            if (!videoToDelete) return;
+
+            try {
+                const response = await fetch(`/video/${videoToDelete}/delete/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Remove card with animation
+                    const card = document.querySelector(`[data-video-id="${videoToDelete}"]`);
+                    card.style.animation = 'fadeOut 0.3s ease';
+                    setTimeout(() => {
+                        card.remove();
+                        
+                        // Check if empty
+                        const grid = document.querySelector('.video-grid');
+                        if (grid && grid.children.length === 0) {
+                            location.reload();
+                        }
+                    }, 300);
+                } else {
+                    alert('Erro ao excluir vídeo: ' + data.message);
+                }
+            } catch (error) {
+                alert('Erro ao excluir vídeo');
+            }
+
+            cancelDelete();
+        }
+
+        // Get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Close modal on escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeVideo();
+                cancelDelete();
+                closeSettings();
+            }
+        });
+
+        // Close modal on click outside
+        document.getElementById('videoModal').addEventListener('click', (e) => {
+            if (e.target.id === 'videoModal') {
+                closeVideo();
+            }
+        });
+
+        document.getElementById('overlay').addEventListener('click', (e) => {
+            if (e.target.id === 'overlay') {
+                cancelDelete();
+                closeSettings();
+            }
+        });
+    </script>
+
+    <style>
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+        }
+    </style>
+</body>
+</html>
