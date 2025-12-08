@@ -12,7 +12,7 @@ from datetime import datetime
 # Altere para o IP onde seu Django está rodando
 API_BASE_URL = "http://127.0.0.1:8000" 
 UPLOAD_URL = f"{API_BASE_URL}/api/videos/"
-HEARTBEAT_URL = f"{API_BASE_URL}/api/devices/heartbeat/"
+HEARTBEAT_URL = f"{API_BASE_URL}/api/devices/status/"
 
 # Nome do arquivo temporário
 VIDEO_FILENAME = "video.temp.mp4"

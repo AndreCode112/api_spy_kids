@@ -1,62 +1,14 @@
-# videos/models.py
 from django.db import models
 from django.utils import timezone
-from datetime import timedelta
-
-
-class VideoGroup(models.Model):
-    """Grupo de vídeos consolidados"""
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
-    total_duration = models.DurationField(default=timedelta())
-    consolidated_path = models.FileField(upload_to='videos/consolidated/', null=True, blank=True)
-    
-    MAX_DURATION_MINUTES = 20  # Duração máxima do grupo em minutos
-    
-    class Meta:
-        ordering = ['-start_time']
-    
-    def __str__(self):
-        return f"Grupo {self.id} - {self.start_time.strftime('%d/%m/%Y %H:%M')}"
-    
-    def can_add_video(self, video):
-        """Verifica se o vídeo pode ser adicionado sem exceder 20 minutos"""
-        new_total_duration = self.total_duration + video.duration
-        max_duration = timedelta(minutes=self.MAX_DURATION_MINUTES)
-        return new_total_duration <= max_duration
-    
-    def get_remaining_duration(self):
-        """Retorna quanto tempo ainda pode ser adicionado ao grupo"""
-        max_duration = timedelta(minutes=self.MAX_DURATION_MINUTES)
-        return max_duration - self.total_duration
-
 
 class Video(models.Model):
-    """Vídeo individual recebido"""
-    file = models.FileField(upload_to='videos/raw/')
+    file = models.FileField(upload_to='videos/capturas/')
     created_at = models.DateTimeField(default=timezone.now)
     duration = models.DurationField()
-    video_group = models.ForeignKey(
-        VideoGroup, 
-        on_delete=models.SET_NULL, 
-        null=True, 
-        blank=True,
-        related_name='videos'
-    )
     processed = models.BooleanField(default=False)
     
     class Meta:
         ordering = ['created_at']
-    
-    def __str__(self):
-        return f"Video {self.id} - {self.created_at.strftime('%d/%m/%Y %H:%M:%S')}"
-    
-    @staticmethod
-    def get_max_gap_minutes():
-        """Gap máximo em minutos para considerar vídeos do mesmo grupo"""
-        return 20  # 20 minutos - vídeos com gap maior serão separados
     
 
 
@@ -71,42 +23,65 @@ class Device(models.Model):
     device_name = models.CharField(max_length=255, default='Dispositivo')
     ip_address = models.GenericIPAddressField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='online')
+    is_online = models.BooleanField(default=True)
     last_seen = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    heartbeat_interval = models.IntegerField(default=30, help_text="Intervalo em segundos")
+    updated_at = models.DateTimeField(auto_now=True) 
     
     class Meta:
         ordering = ['-last_seen']
+
     
     def __str__(self):
-        return f"{self.hostname} - {self.status}"
+        return self.hostname
     
-    @property
-    def is_online(self):
-        """Verifica se o dispositivo está online"""
-        from django.utils import timezone
-        from datetime import timedelta
-        
-        time_threshold = timezone.now() - timedelta(seconds=self.heartbeat_interval * 2)
-        return self.last_seen > time_threshold
-    
-    def update_status(self):
-        """Atualiza status baseado no último heartbeat"""
-        self.status = 'online' if self.is_online else 'offline'
-        self.save()
 
+class DeviceConfigAudio(models.Model):
+    hostname = models.ForeignKey(
+        Device,
+        to_field='hostname',
+        on_delete=models.CASCADE,
+        related_name='audios'
+    )
 
-class ScreenCapture(models.Model):
-    """Grava capturas de tela/vídeo dos dispositivos"""
-    device = models.ForeignKey(Device, on_delete=models.CASCADE, related_name='captures')
-    video = models.ForeignKey('Video', on_delete=models.SET_NULL, null=True, blank=True)
-    capture_data = models.FileField(upload_to='captures/%Y/%m/%d/%H/')
-    timestamp = models.DateTimeField(auto_now_add=True)
-    duration = models.DurationField(null=True, blank=True)
-    file_size_mb = models.FloatField(default=0)
+    audio = models.CharField(
+        max_length=255,
+        help_text="Nome do arquivo ou string de configuração do áudio."
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
-        ordering = ['-timestamp']
-    
+        ordering = ['hostname', 'created_at']
+        verbose_name = "Áudio do dispositivo"
+        verbose_name_plural = "Áudios dos dispositivos"
+
     def __str__(self):
-        return f"{self.device.hostname} - {self.timestamp}"
+        return self.audio
+
+
+
+class DeviceConfig(models.Model):
+    hostname = models.OneToOneField(
+        Device,
+        to_field='hostname',
+        primary_key=True,
+        on_delete=models.CASCADE,
+        related_name='config'
+    )
+
+    tempo = models.PositiveIntegerField(
+        default=10,
+        help_text="Tempo em segundos para execução de comandos."
+    )
+
+    audio = models.ForeignKey(
+        DeviceConfigAudio,
+        on_delete=models.CASCADE,
+        related_name='audios'
+    )
+
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Configuração de {self.hostname.hostname}"
