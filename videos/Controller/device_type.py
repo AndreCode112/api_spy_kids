@@ -42,8 +42,6 @@ class DeviceType:
 
             self.response = {
                 'success': True,    
-                'device_id': device.id,
-                'created': created,
                 'message': 'Status do dispositivo atualizado com sucesso'
             }
 

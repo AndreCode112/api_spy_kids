@@ -1,15 +1,63 @@
 from django.db import models
 from django.utils import timezone
+from django.conf import settings
+import os
+import subprocess
+
 
 class Video(models.Model):
+    title = models.CharField(max_length=255, blank=True, null=True, verbose_name="Título") # Novo
     file = models.FileField(upload_to='videos/capturas/')
+    thumbnail = models.ImageField(upload_to='videos/thumbnails/', blank=True, null=True) # Novo
     created_at = models.DateTimeField(default=timezone.now)
     duration = models.DurationField()
     processed = models.BooleanField(default=False)
     
     class Meta:
-        ordering = ['created_at']
+        ordering = ['-created_at']
+
+    def save(self, *args, **kwargs):
+        if not self.title:
+            self.title = f"Vídeo #{self.pk}" if self.pk else "Novo Vídeo"
+            
+        super().save(*args, **kwargs)
+        
+        # Gera thumbnail se não existir e o arquivo de vídeo existir
+        if self.file and not self.thumbnail:
+            self.generate_thumbnail()
+
+    def generate_thumbnail(self):
+        """Gera uma thumbnail usando FFmpeg"""
+        try:
+            video_path = self.file.path
+            base_name = os.path.basename(video_path)
+            thumb_name = os.path.splitext(base_name)[0] + '.jpg'
+            thumb_rel_path = os.path.join('videos', 'thumbnails', thumb_name)
+            thumb_full_path = os.path.join(settings.MEDIA_ROOT, 'videos', 'thumbnails', thumb_name)
+
+            os.makedirs(os.path.dirname(thumb_full_path), exist_ok=True)
+
+            cmd = [
+                'ffmpeg', '-y', '-i', video_path, 
+                '-ss', '00:00:01.000', '-vframes', '1', 
+                thumb_full_path
+            ]
+            subprocess.check_call(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+            # Salva o caminho no banco (sem chamar save() recursivamente)
+            self.thumbnail.name = thumb_rel_path
+            super().save(update_fields=['thumbnail'])
+        except Exception as e:
+            print(f"Erro ao gerar thumbnail: {e}")
     
+class CompiledVideo(models.Model):
+    file = models.FileField(upload_to='videos/compilados/')
+    created_at = models.DateTimeField(auto_now_add=True)
+    source_videos = models.ManyToManyField(Video, related_name='compiled_in')
+    total_duration = models.DurationField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Compilado {self.id} - {self.created_at}"
 
 
 class Device(models.Model):
@@ -85,3 +133,51 @@ class DeviceConfig(models.Model):
 
     def __str__(self):
         return f"Configuração de {self.hostname.hostname}"
+    
+class Notification(models.Model):
+    TYPES = (
+        ('info', 'Informação'),
+        ('success', 'Sucesso'),
+        ('warning', 'Aviso'),
+        ('error', 'Erro'),
+    )
+
+    message = models.CharField(max_length=255)
+    notification_type = models.CharField(max_length=20, choices=TYPES, default='info')
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.notification_type}: {self.message}"
+    
+
+class Log(models.Model):
+    CLIENT_CHOICES = (
+        ('server', 'Server'),
+        ('app', 'App'),
+    )
+
+    client = models.CharField(
+        max_length=10,
+        choices=CLIENT_CHOICES,
+        help_text="Origem do erro: server ou app"
+    )
+
+    mensagem_erro = models.TextField(
+        help_text="Descrição detalhada do erro"
+    )
+
+    data_erro = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+        verbose_name = "Log de Erro"
+        verbose_name_plural = "Logs de Erro"
+        ordering = ['-data_erro']
+
+    def __str__(self):
+        return f"[{self.client.upper()}] {self.data_erro:%d/%m/%Y %H:%M}"

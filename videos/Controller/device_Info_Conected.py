@@ -24,12 +24,8 @@ class deviceInfoConnectedApi:
                     'last_seen': device.last_seen.isoformat(),
                     'created_at': device.created_at.isoformat(),
                     'updated_at': device.updated_at.isoformat(),
-                    'last_capture': (
-                        device.captures.first().timestamp.isoformat()
-                        if device.captures.exists() else None
-                    ),
                 }
-            }
+            } if len(device) else {} 
 
             self.status = status.HTTP_200_OK
             self.StrErr = ''

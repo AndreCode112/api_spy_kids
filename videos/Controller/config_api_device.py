@@ -20,7 +20,7 @@ class api_device_config:
 
             self.response = {
                 'tempo': config_device.tempo if config_device else 600,
-                'audio': config_device.audio if config_device else '',
+                'audio': config_device.audio.audio if config_device else '',
             }
 
             self.strErr = ''

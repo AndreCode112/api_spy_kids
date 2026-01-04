@@ -1,5 +1,27 @@
 from django.contrib import admin
-from .models import Device, Video, DeviceConfig
+from .models import Device, Video, DeviceConfig, Notification, DeviceConfigAudio, Log
+
+
+
+
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = (
+        'message',  
+        'notification_type', 
+        'is_read', 
+        'created_at' 
+    )
+
+
+@admin.register(Log)
+class Log(admin.ModelAdmin):
+    list_display = (
+    'client', 
+    'mensagem_erro',
+    'data_erro'
+)
+
 
 
 @admin.register(Device)
@@ -43,7 +65,7 @@ class DeviceAdmin(admin.ModelAdmin):
     def is_online(self, obj):
         """Exibe status visual no admin."""
         return obj.is_online
-    is_online.boolean = True  # Adiciona ícone ✔/✘
+    is_online.boolean = True
     is_online.short_description = "Online?"
 
 
@@ -100,4 +122,31 @@ class DeviceConfigAdmin(admin.ModelAdmin):
     ordering = ('-updated_at',)
 
 
-    
+
+@admin.register(DeviceConfigAudio)
+class DeviceConfigAudioAdmin(admin.ModelAdmin):
+    list_display = (
+        'hostname_display',
+        'audio',
+        'created_at',
+    )
+
+    list_filter = (
+        'hostname',
+        'created_at',
+    )
+
+    search_fields = (
+        'hostname__hostname',
+        'audio',
+    )
+
+    ordering = ('hostname__hostname', 'created_at')
+
+    # Exibir o hostname real (string), não "object"
+    def hostname_display(self, obj):
+        return obj.hostname.hostname
+    hostname_display.short_description = 'Hostname'
+
+
+

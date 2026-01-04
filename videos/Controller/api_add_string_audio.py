@@ -22,20 +22,25 @@ class api_add_string_audio:
 
 
             data = request.data
-            Audios:list = data.get('audios', '')
+            Audios:list = data.get('audios', [])
 
 
             for audio in Audios:
-                new_audio = DeviceConfigAudio(
+                AudioExists = DeviceConfigAudio.objects.filter(
                     hostname=device,
                     audio=audio
-                )
-                new_audio.save()
+                ).exists()
+
+                if not AudioExists:
+                    DeviceConfigAudio.objects.create(
+                        hostname=device,
+                        audio=audio
+                    )
 
 
             self.response = {
                 'success': True,
-                'message': 'Lista de áudios adicionada com sucesso'
+                'message': 'Lista de áudios adicionada e verificada com sucesso'
             }
 
             self.strErr = ''

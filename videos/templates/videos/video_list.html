@@ -1,0 +1,64 @@
+{% if history_groups %}
+    {% for group in history_groups %}
+    <div class="date-group mb-4">
+        <h3 class="date-header sticky-top bg-dark text-white p-2">
+            {{ group.date|date:"d" }} de {{ group.date|date:"F, Y" }}
+        </h3>
+        
+        <div class="video-grid">
+            {% for video in group.videos %}
+            <div class="video-card" data-video-id="{{ video.id }}">
+                <div class="video-thumbnail">
+                    {% if video.thumbnail %}
+                        <img src="{{ video.thumbnail.url }}" alt="Thumb" loading="lazy">
+                    {% else %}
+                        <div class="no-thumb-placeholder">🎬</div>
+                    {% endif %}
+                    <div class="play-overlay" onclick="playVideo({{ video.id }}, '{{ group.date|date:'Y-m-d' }}')">▶</div>
+                </div>
+
+                <div class="video-info">
+                    <div class="video-title-container">
+                        <div class="video-title" 
+                            id="title-display-{{ video.id }}" 
+                            ondblclick="toggleEdit({{ video.id }})"
+                            title="Duplo clique para editar">
+                            {{ video.title|default:"Sem Título" }}
+                        </div>
+                        <input type="text" 
+                            id="title-input-{{ video.id }}" 
+                            class="title-edit-input" 
+                            value="{{ video.title|default:'' }}" 
+                            onblur="saveTitle({{ video.id }})"
+                            onkeydown="if(event.key === 'Enter') saveTitle({{ video.id }})"
+                            style="display: none;">
+                    </div>
+
+                    <div class="video-meta">
+                        {{ video.created_at|date:"H:i" }} • 
+                        {% widthratio video.duration.total_seconds 60 1 %} min
+                    </div>
+                    
+                    <div class="video-actions">
+                        <button class="btn-play" onclick="playVideo({{ video.id }}, '{{ group.date|date:'Y-m-d' }}')">Assistir</button>
+                        <button class="btn-delete" onclick="confirmDelete({{ video.id }})">🗑</button>
+                        <button class="btn-edit" onclick="openEditModal({{ video.id }}, '{{ video.title|escapejs }}')" title="Editar Título">✎</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+
+{% else %}
+    <div class="no-videos">
+        <p>Nenhum vídeo foi encontrado no momento.</p>
+    </div>
+{% endif %}
+
+<script>
+    if (typeof updatePlaylistData === 'function') {
+        updatePlaylistData({{ videos_json|safe|default:"[]" }});
+    }
+</script>
