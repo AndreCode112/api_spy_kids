@@ -29,3 +29,5 @@ urlpatterns = [
     path('api/logs/',InsertLogsApiApp, name='api_logs'),
     path('api/logs/list/', Get_consumer_logs, name='api_logs_list'),
 ]
+
+handler404 = 'videos.views.custom_page_not_found_view'

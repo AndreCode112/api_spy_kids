@@ -1,0 +1,115 @@
+{% block content %}
+<style>
+    /* Variáveis de Cores Neutras e Elegantes */
+    :root {
+        --bg-color: #f3f4f6; /* Cinza muito suave */
+        --glass-bg: rgba(255, 255, 255, 0.65); /* Branco translúcido */
+        --glass-border: rgba(255, 255, 255, 0.9);
+        --text-primary: #1f2937; /* Quase preto (Gunmetal) */
+        --text-secondary: #6b7280; /* Cinza médio */
+        --accent-color: #374151; /* Cinza escuro para botões */
+        --accent-hover: #111827; /* Preto suave para hover */
+        --shadow-soft: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+    }
+
+    /* Fundo da página (caso o base.html não tenha um fundo definido) */
+    .error-page-wrapper {
+        min-height: 80vh; /* Ocupa altura sem forçar scroll */
+        display: flex;
+        align-items: center;
+        justify_content: center;
+        background: radial-gradient(circle at top left, #fcfdfd, #eef2f6);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    /* O Card com efeito de Vidro (Glassmorphism) */
+    .glass-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(12px); /* O desfoque elegante */
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        padding: 60px 40px;
+        box-shadow: var(--shadow-soft);
+        max-width: 500px;
+        margin: 0 auto;
+        transition: transform 0.3s ease;
+    }
+
+    .glass-card:hover {
+        transform: translateY(-5px); /* Levita levemente ao passar o mouse */
+    }
+
+    /* Tipografia */
+    .error-code {
+        font-size: 8rem;
+        font-weight: 700;
+        line-height: 1;
+        letter-spacing: -4px;
+        color: var(--text-primary);
+        opacity: 0.08; /* Bem sutil no fundo */
+        margin-bottom: -40px; /* Sobreposição elegante */
+        position: relative;
+        z-index: 0;
+        user-select: none;
+    }
+
+    .error-title {
+        position: relative;
+        z-index: 1;
+        font-size: 2rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 16px;
+    }
+
+    .error-description {
+        position: relative;
+        z-index: 1;
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 40px;
+        font-weight: 400;
+    }
+
+    .btn-elegant {
+        background-color: var(--accent-color);
+        color: #ffffff;
+        padding: 12px 32px;
+        border-radius: 50px; /* Pill shape */
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-elegant:hover {
+        background-color: var(--accent-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        color: white;
+    }
+</style>
+
+<div class="error-page-wrapper">
+    <div class="container text-center">
+        
+        <div class="glass-card">
+            <div class="error-code">404</div>
+            
+            <h2 class="error-title">Página não encontrada</h2>
+            
+            <p class="error-description">
+                O link que você tentou acessar não existe mais ou foi movido para outro endereço.
+            </p>
+            
+            <a href="{% url 'video_gallery' %}" class="btn-elegant">
+                Voltar ao Início
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

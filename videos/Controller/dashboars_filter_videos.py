@@ -63,7 +63,7 @@ class DashboardsFilterVideos:
                 'end_date_val': end_date_str,
             }
 
-            self.route= 'videos/partials/video_list.html' if request.headers.get('x-requested-with') == 'XMLHttpRequest' else 'videos/gallery.html' 
+            self.route= 'videos/video_list.html' if request.headers.get('x-requested-with') == 'XMLHttpRequest' else 'videos/gallery.html' 
             self.status = status.HTTP_200_OK 
             return True
         except Exception as e:
