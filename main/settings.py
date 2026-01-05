@@ -133,8 +133,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+# ONDE O DJANGO VAI PROCURAR OS ARQUIVOS (A pasta da Imagem 2)
 STATICFILES_DIRS = [
-    ('videos', os.path.join(BASE_DIR, 'videos')), 
+    os.path.join(BASE_DIR, 'static'),
 ]
 
 MEDIA_URL = '/media/'
