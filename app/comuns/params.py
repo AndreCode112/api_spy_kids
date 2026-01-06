@@ -1,7 +1,7 @@
 import os
 
 class Tparams:
-    API_BASE_URL ="http://127.0.0.1:8000"
+    API_BASE_URL ="https://spykids.pythonanywhere.com"
     UPLOAD_URL = f"{API_BASE_URL}/api/video/upload/"
     APICONFIGDEVICEAUDIO_URL = f"{API_BASE_URL}/api/config/device/audio/" 
     APIGETCONFIGDEVICE_URL = f"{API_BASE_URL}/api/config/device/"

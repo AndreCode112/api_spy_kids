@@ -81,7 +81,6 @@ class CommandFFMPEG:
             result = subprocess.run(command, capture_output=True, text=True, encoding='utf-8')
 
             if result.returncode != 0:
-                self.strErr = f"Erro no FFmpeg: {result.stderr}"
                 logs(self.strErr).log_messageTxt()
                 return False
             
