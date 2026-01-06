@@ -25,7 +25,10 @@ class deviceInfoConnectedApi:
                     'created_at': device.created_at.isoformat(),
                     'updated_at': device.updated_at.isoformat(),
                 }
-            } if len(device) else {} 
+            } if device else {
+                  'found': False,
+                  'device': {}
+            }
 
             self.status = status.HTTP_200_OK
             self.StrErr = ''
