@@ -1,6 +1,6 @@
 
 
-from videos.models import Device
+from videos.models import Device, Video
 from rest_framework import status
 
 class deviceInfoConnectedApi:
@@ -11,7 +11,11 @@ class deviceInfoConnectedApi:
 
     def _GetDeviceInfo(self) -> bool:    
         try:
-            device: Device= Device.objects.order_by('id').first()
+          
+            device = Device.objects.order_by('id').first()
+            last_video = Video.objects.first() 
+            videos_count = Video.objects.count()
+
             self.response = {
                 'found': True,
                 'device': {
@@ -24,10 +28,12 @@ class deviceInfoConnectedApi:
                     'last_seen': device.last_seen.isoformat(),
                     'created_at': device.created_at.isoformat(),
                     'updated_at': device.updated_at.isoformat(),
+                    'captures_count': videos_count,
+                    'last_capture': last_video.created_at.isoformat() if last_video else None 
                 }
             } if device else {
-                  'found': False,
-                  'device': {}
+                'found': False,
+                'device': {}
             }
 
             self.status = status.HTTP_200_OK

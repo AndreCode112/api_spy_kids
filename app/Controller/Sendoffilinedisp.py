@@ -19,13 +19,13 @@ def Send_offline_disp(signum, frame):
             strErr = "Erro ao enviar status offline: " + instanceServerRequestApi.strErr
             raise Exception(strErr)
         
-        sys.exit(0)
+        sys.exit(1)
 
     except Exception as e:
         strErr = "Erro ao enviar status offline: " + str(e)
+        print(e)
         instanceLogApi: LogApi = LogApi()
         if not instanceLogApi.InsertLogServer(strErr):
             logs(strErr).log_messageTxt()
-       
-        sys.exit(0)
+        sys.exit(1)
 
