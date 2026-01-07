@@ -67,11 +67,6 @@ button {
     transform: scale(1.05);
 }
 
-.btn-update-Device-Info {
-    margin-top: 20px  !important;
-
-}
-
 /* Botões Primários (Ação) */
 .btn-action, .btn-play, .btn-watch-series, .btn-confirm {
     background: var(--text-main);
@@ -1612,5 +1607,8 @@ button {
 @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
 .container-update-Device-Info {
-    
+    display: flex;
+    align-content: stretch;
+    justify-content: flex-end;
+    margin: 11px;
 }
