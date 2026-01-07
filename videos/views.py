@@ -329,7 +329,7 @@ def api_agendar_calcular_qtd_videos_in_hd(request):
             'message': mensagem_erro
         }, status=instanceAgendarCalcularQtdVideosInHD.Status)
     
-    return JsonResponse(instanceAgendarCalcularQtdVideosInHD.response, instanceAgendarCalcularQtdVideosInHD.Status)
+    return JsonResponse(instanceAgendarCalcularQtdVideosInHD.response)
 
 
 
