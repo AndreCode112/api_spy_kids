@@ -42,14 +42,10 @@ const modal_Agendar_check_qtd_video_el = document.getElementById("modal_Agendar_
             const dados = await response.json();
 
             if (response.ok) {
-                // Cores ajustadas para o tema dark
-                const corMsg = deveSalvar ? '#10b981' : '#38bdf8'; // Verde Emerald ou Azul Sky
                 
                 const html = `
-                    <div class="modal_Agendar_check_qtd_video_feedback" style="color: ${corMsg}; border: 1px solid ${corMsg}; box-shadow: 0 0 10px ${corMsg}33;">${dados.mensagem}</div>
-                    
                     <div class="modal_Agendar_check_qtd_video_result_item">
-                        <span>Carga horária:</span> 
+                        <span>Carga horária Trabalhada:</span> 
                         <span class="modal_Agendar_check_qtd_video_result_value">${dados.duracao_diaria} h</span>
                     </div>
                     <div class="modal_Agendar_check_qtd_video_result_item">
@@ -59,10 +55,6 @@ const modal_Agendar_check_qtd_video_el = document.getElementById("modal_Agendar_
                     <div class="modal_Agendar_check_qtd_video_result_item">
                         <span>Dias completos:</span> 
                         <span class="modal_Agendar_check_qtd_video_result_value">${dados.dias} dias</span>
-                    </div>
-                    <div class="modal_Agendar_check_qtd_video_result_item">
-                        <span>Sobra último dia:</span> 
-                        <span class="modal_Agendar_check_qtd_video_result_value">${dados.horas_no_ultimo_dia} h</span>
                     </div>
                 `;
                 
