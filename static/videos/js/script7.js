@@ -55,7 +55,7 @@ const modal_Agendar_check_qtd_video_el = document.getElementById("modal_Agendar_
                     </div>
 
                     <div class="modal_Agendar_check_qtd_video_result_item">
-                        <span>Tempo estimado para atingir o limite de armazenamento do servidor:</span> 
+                        <span>Tempo até o limite de armazenamento:</span> 
                         <span class="modal_Agendar_check_qtd_video_result_value">${dados.dias} dias</span>
                     </div>
 
