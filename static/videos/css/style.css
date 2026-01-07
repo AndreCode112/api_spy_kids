@@ -1451,7 +1451,7 @@ button {
     padding: 35px; 
     border: 1px solid #333; /* Borda sutil */
     width: 90%; 
-    max-width: 420px; 
+    max-width: 441px; 
     border-radius: 16px; 
     position: relative; 
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9); /* Sombra profunda */
