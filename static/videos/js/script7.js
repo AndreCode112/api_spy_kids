@@ -44,18 +44,21 @@ const modal_Agendar_check_qtd_video_el = document.getElementById("modal_Agendar_
             if (response.ok) {
                 
                 const html = `
-                    <div class="modal_Agendar_check_qtd_video_result_item">
-                        <span>Carga horária Trabalhada:</span> 
+                   <div class="modal_Agendar_check_qtd_video_result_item">
+                        <span>Carga horária diária:</span> 
                         <span class="modal_Agendar_check_qtd_video_result_value">${dados.duracao_diaria} h</span>
                     </div>
+
                     <div class="modal_Agendar_check_qtd_video_result_item">
-                        <span>Vídeos (capacidade):</span> 
+                        <span>Capacidade estimada de vídeos:</span> 
                         <span class="modal_Agendar_check_qtd_video_result_value">${dados.videos}</span>
                     </div>
+
                     <div class="modal_Agendar_check_qtd_video_result_item">
-                        <span>Dias completos:</span> 
+                        <span>Tempo estimado para atingir o limite de armazenamento do servidor:</span> 
                         <span class="modal_Agendar_check_qtd_video_result_value">${dados.dias} dias</span>
                     </div>
+
                 `;
                 
                 document.getElementById('modal_Agendar_check_qtd_video_listaResultados').innerHTML = html;
