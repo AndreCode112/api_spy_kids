@@ -1,7 +1,6 @@
 const modal_Agendar_check_qtd_video_el = document.getElementById("modal_Agendar_check_qtd_video");
     const modal_Agendar_check_qtd_video_resultArea = document.getElementById("modal_Agendar_check_qtd_video_resultadoArea");
 
-    // Nomes de funções únicos para não conflitar com outros scripts
     function modal_Agendar_check_qtd_video_abrir() {
         modal_Agendar_check_qtd_video_el.style.display = "block";
         modal_Agendar_check_qtd_video_resultArea.style.display = "none";
@@ -11,7 +10,6 @@ const modal_Agendar_check_qtd_video_el = document.getElementById("modal_Agendar_
         modal_Agendar_check_qtd_video_el.style.display = "none";
     }
 
-    // Fechar ao clicar fora
     window.onclick = function(event) {
         if (event.target == modal_Agendar_check_qtd_video_el) {
             modal_Agendar_check_qtd_video_fechar();
@@ -19,7 +17,6 @@ const modal_Agendar_check_qtd_video_el = document.getElementById("modal_Agendar_
     }
 
     async function modal_Agendar_check_qtd_video_processar(deveSalvar) {
-        // Pega inputs pelos novos IDs
         const inicio = document.getElementById('modal_Agendar_check_qtd_video_hora_inicio').value;
         const fim = document.getElementById('modal_Agendar_check_qtd_video_hora_fim').value;
 
@@ -45,25 +42,33 @@ const modal_Agendar_check_qtd_video_el = document.getElementById("modal_Agendar_
             const dados = await response.json();
 
             if (response.ok) {
-                const corMsg = deveSalvar ? 'green' : '#17a2b8';
+                // Cores ajustadas para o tema dark
+                const corMsg = deveSalvar ? '#10b981' : '#38bdf8'; // Verde Emerald ou Azul Sky
                 
-                // HTML interno também usa as classes prefixadas
                 const html = `
-                    <div class="modal_Agendar_check_qtd_video_feedback" style="color: ${corMsg};">${dados.mensagem}</div>
-                    <hr style="border: 0; border-top: 1px solid #eee;">
-                    <div class="modal_Agendar_check_qtd_video_result_item"><span>Carga horária:</span> <span class="modal_Agendar_check_qtd_video_result_value">${dados.duracao_diaria} h</span></div>
-                    <div class="modal_Agendar_check_qtd_video_result_item"><span>Vídeos (capacidade):</span> <span class="modal_Agendar_check_qtd_video_result_value">${dados.videos}</span></div>
-                    <div class="modal_Agendar_check_qtd_video_result_item"><span>Dias completos:</span> <span class="modal_Agendar_check_qtd_video_result_value">${dados.dias} dias</span></div>
-                    <div class="modal_Agendar_check_qtd_video_result_item"><span>Sobra último dia:</span> <span class="modal_Agendar_check_qtd_video_result_value">${dados.horas_no_ultimo_dia} h</span></div>
+                    <div class="modal_Agendar_check_qtd_video_feedback" style="color: ${corMsg}; border: 1px solid ${corMsg}; box-shadow: 0 0 10px ${corMsg}33;">${dados.mensagem}</div>
+                    
+                    <div class="modal_Agendar_check_qtd_video_result_item">
+                        <span>Carga horária:</span> 
+                        <span class="modal_Agendar_check_qtd_video_result_value">${dados.duracao_diaria} h</span>
+                    </div>
+                    <div class="modal_Agendar_check_qtd_video_result_item">
+                        <span>Vídeos (capacidade):</span> 
+                        <span class="modal_Agendar_check_qtd_video_result_value">${dados.videos}</span>
+                    </div>
+                    <div class="modal_Agendar_check_qtd_video_result_item">
+                        <span>Dias completos:</span> 
+                        <span class="modal_Agendar_check_qtd_video_result_value">${dados.dias} dias</span>
+                    </div>
+                    <div class="modal_Agendar_check_qtd_video_result_item">
+                        <span>Sobra último dia:</span> 
+                        <span class="modal_Agendar_check_qtd_video_result_value">${dados.horas_no_ultimo_dia} h</span>
+                    </div>
                 `;
                 
                 document.getElementById('modal_Agendar_check_qtd_video_listaResultados').innerHTML = html;
                 modal_Agendar_check_qtd_video_resultArea.style.display = "block";
                 
-                if (deveSalvar) {
-                    // location.reload(); 
-                }
-
             } else {
                 alert("Erro: " + dados.error);
             }
@@ -74,7 +79,6 @@ const modal_Agendar_check_qtd_video_el = document.getElementById("modal_Agendar_
         }
     }
 
-    // Função Cookie também renomeada para evitar duplicidade se você já tiver uma global
     function modal_Agendar_check_qtd_video_getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {

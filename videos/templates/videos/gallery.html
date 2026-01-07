@@ -210,12 +210,10 @@
                 </div>
             </div>
 
-            <!-- Progress Bar -->
             <div class="progress-bar-container">
                 <div class="progress-bar" id="progressBar" style="width: 0%"></div>
             </div>
             <div class="progress-text">
-                <span id="videosStorage">0 GB</span> usados por vídeos
             </div>
         </div>
 
@@ -227,7 +225,9 @@
         <div class="modal-header">
             <h2>📱 Informações do Dispositivo</h2>
             <button class="btn-close-modal" onclick="closeDeviceInfo()">✕</button>
+            <button class="btn-update-Device-Info" onclick="UpdateDeviceInfor()">⟲</button>
         </div>
+
         <div id="deviceContent">
             <div class="device-loading">
                 <span class="loading-spinner"></span>
@@ -259,24 +259,24 @@
         <div class="modal_Agendar_check_qtd_video_content">
             <span class="modal_Agendar_check_qtd_video_close" onclick="modal_Agendar_check_qtd_video_fechar()">&times;</span>
             
-            <div style="margin-bottom: 15px;">
-                <h2 style="margin: 0; color: #333;">Cálculo de Capacidade</h2>
-                <p style="color: #666; font-size: 14px; margin: 5px 0 0 0;">Simule ou defina o horário oficial.</p>
+            <div style="margin-bottom: 25px;">
+                <h2 class="modal_title">Capacidade de Gravação</h2>
+                <p class="modal_subtitle">Defina o período de atividade do sistema.</p>
             </div>
 
-            <label class="modal_Agendar_check_qtd_video_label" for="modal_Agendar_check_qtd_video_hora_inicio">Início:</label>
+            <label class="modal_Agendar_check_qtd_video_label" for="modal_Agendar_check_qtd_video_hora_inicio">Horário Inicial</label>
             <input type="time" class="modal_Agendar_check_qtd_video_input" id="modal_Agendar_check_qtd_video_hora_inicio" value="{{ config.hora_inicio|date:'H:i'|default:'08:00' }}">
 
-            <label class="modal_Agendar_check_qtd_video_label" for="modal_Agendar_check_qtd_video_hora_fim">Fim:</label>
+            <label class="modal_Agendar_check_qtd_video_label" for="modal_Agendar_check_qtd_video_hora_fim">Horário Final</label>
             <input type="time" class="modal_Agendar_check_qtd_video_input" id="modal_Agendar_check_qtd_video_hora_fim" value="{{ config.hora_fim|date:'H:i'|default:'16:00' }}">
 
             <div class="modal_Agendar_check_qtd_video_actions">
-                <button class="modal_Agendar_check_qtd_video_btn_simular" onclick="modal_Agendar_check_qtd_video_processar(false)">Apenas Simular</button>
-                <button class="modal_Agendar_check_qtd_video_btn_salvar" onclick="modal_Agendar_check_qtd_video_processar(true)">Salvar Oficial</button>
+                <button class="modal_Agendar_check_qtd_video_btn_simular" onclick="modal_Agendar_check_qtd_video_processar(false)">Simular</button>
+                <button class="modal_Agendar_check_qtd_video_btn_salvar" onclick="modal_Agendar_check_qtd_video_processar(true)">Salvar Alterações</button>
             </div>
 
             <div id="modal_Agendar_check_qtd_video_resultadoArea">
-                <h3 style="margin-top: 0; color: #333;">Resultado:</h3>
+                <h3 style="margin: 0 0 15px 0; color: #fff; font-size: 16px;">Análise:</h3>
                 <div id="modal_Agendar_check_qtd_video_listaResultados"></div>
             </div>
         </div>

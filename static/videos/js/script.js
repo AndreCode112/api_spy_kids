@@ -23,6 +23,10 @@
             await loadDeviceInfo();
         }
 
+        async function UpdateDeviceInfor() {
+            await loadDeviceInfo();
+        }
+
         // Close device info modal
         function closeDeviceInfo() {
             const modal = document.getElementById('deviceModal');
@@ -63,6 +67,7 @@
             const lastSeen = new Date(device.last_seen);
             const createdAt = new Date(device.created_at);
             const lastCapture = device.last_capture ? new Date(device.last_capture) : null;
+            
             
             const formatDate = (date) => {
                 return date.toLocaleString('pt-BR', {
@@ -198,7 +203,6 @@
             document.getElementById('totalStorage').textContent = storage.total_gb;
             document.getElementById('usedStorage').textContent = storage.used_gb;
             document.getElementById('freeStorage').textContent = storage.free_gb;
-            document.getElementById('videosStorage').textContent = storage.videos_size_gb;
             document.getElementById('percentText').textContent = Math.round(storage.percent_used) + '%';
 
             // Update progress bar

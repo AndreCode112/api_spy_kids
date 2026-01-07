@@ -1,7 +1,18 @@
 from django.contrib import admin
-from .models import Device, Video, DeviceConfig, Notification, DeviceConfigAudio, Log
+from .models import Device, Video, DeviceConfig, Notification, DeviceConfigAudio, Log, ConfiguracaoParaCalculoGravacao
 
 
+
+
+@admin.register(ConfiguracaoParaCalculoGravacao)
+class ConfiguracaoParaCalculoGravacaoAdmin(admin.ModelAdmin):
+    list_display = (
+        "tamanho_hd_gb", 
+        "tamanho_video_mb",
+        "duracao_video_min", 
+        "hora_inicio", 
+        "hora_fim"
+   )
 
 
 @admin.register(Notification)
