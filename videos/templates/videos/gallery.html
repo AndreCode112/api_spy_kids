@@ -21,6 +21,8 @@
             <span class="username">👤 {{ user.username }}</span>
             <button class="btn-device-info" onclick="openDeviceInfo()" title="Informações do Dispositivo">🖥️</button>
             <button class="btn-settings" onclick="openSettings()">⚙️</button>
+            <button class="btn-settings" onclick="modal_Agendar_check_qtd_video_abrir()">📅</button>
+            
             <button class="btn-icon notification-trigger" onclick="toggleNotificationPanel()">
                 🔔
                 <span id="notif-badge" class="badge">0</span>
@@ -249,6 +251,33 @@
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closeEditModal()">Cancelar</button>
                 <button class="btn-confirm" onclick="saveNewTitle()">Salvar Alterações</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal_Agendar_check_qtd_video" class="modal_Agendar_check_qtd_video_overlay">
+        <div class="modal_Agendar_check_qtd_video_content">
+            <span class="modal_Agendar_check_qtd_video_close" onclick="modal_Agendar_check_qtd_video_fechar()">&times;</span>
+            
+            <div style="margin-bottom: 15px;">
+                <h2 style="margin: 0; color: #333;">Cálculo de Capacidade</h2>
+                <p style="color: #666; font-size: 14px; margin: 5px 0 0 0;">Simule ou defina o horário oficial.</p>
+            </div>
+
+            <label class="modal_Agendar_check_qtd_video_label" for="modal_Agendar_check_qtd_video_hora_inicio">Início:</label>
+            <input type="time" class="modal_Agendar_check_qtd_video_input" id="modal_Agendar_check_qtd_video_hora_inicio" value="{{ config.hora_inicio|date:'H:i'|default:'08:00' }}">
+
+            <label class="modal_Agendar_check_qtd_video_label" for="modal_Agendar_check_qtd_video_hora_fim">Fim:</label>
+            <input type="time" class="modal_Agendar_check_qtd_video_input" id="modal_Agendar_check_qtd_video_hora_fim" value="{{ config.hora_fim|date:'H:i'|default:'16:00' }}">
+
+            <div class="modal_Agendar_check_qtd_video_actions">
+                <button class="modal_Agendar_check_qtd_video_btn_simular" onclick="modal_Agendar_check_qtd_video_processar(false)">Apenas Simular</button>
+                <button class="modal_Agendar_check_qtd_video_btn_salvar" onclick="modal_Agendar_check_qtd_video_processar(true)">Salvar Oficial</button>
+            </div>
+
+            <div id="modal_Agendar_check_qtd_video_resultadoArea">
+                <h3 style="margin-top: 0; color: #333;">Resultado:</h3>
+                <div id="modal_Agendar_check_qtd_video_listaResultados"></div>
             </div>
         </div>
     </div>

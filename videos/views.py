@@ -17,6 +17,7 @@ from .Controller.get_notifications import Getnotification, mark_all_read_notific
 from .Controller.edit_title_video import editVideoTitle
 from .Controller.dashboars_filter_videos import DashboardsFilterVideos
 from .Controller.consumer_logs_dashboard import ConsumerDashboardLog
+from .Controller.agendar_calcular_videos_in_hd import AgendarCalcularQtdVideosInHD
 
 from .Dto.logDto import LogsDto
 from .Dto.notifyDto import notifyDto
@@ -307,6 +308,30 @@ def mark_all_read(request):
 
 
     return JsonResponse(instance_mark_all_read_notification.response)
+
+
+
+@login_required(login_url='/login/')
+@require_http_methods(["POST"])
+def api_agendar_calcular_qtd_videos_in_hd(request):
+    instanceAgendarCalcularQtdVideosInHD: AgendarCalcularQtdVideosInHD =  AgendarCalcularQtdVideosInHD()
+    if not instanceAgendarCalcularQtdVideosInHD.Execute(request):
+        instanceMensagensLogs = MensagensLogs()
+        mensagem_erro = instanceAgendarCalcularQtdVideosInHD.StrErr
+
+        if not instanceMensagensLogs.execute_log_error(LogsDto.SERVER, mensagem_erro):
+           mensagem_erro +=  ' - ' + instanceMensagensLogs.strErr
+
+        if not instanceMensagensLogs.execute_notification('Não foi possível calcular quantos vídeos cabem no espaço disponível.', notifyDto.error):
+            mensagem_erro +=  ' - ' + instanceMensagensLogs.strErr
+          
+        return JsonResponse({
+            'message': mensagem_erro
+        }, status=instanceAgendarCalcularQtdVideosInHD.Status)
+    
+    return JsonResponse(instanceAgendarCalcularQtdVideosInHD.response, instanceAgendarCalcularQtdVideosInHD.Status)
+
+
 
 
 

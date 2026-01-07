@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import (
-     video_gallery, stream_video, storage_info, device_info_connected , device_type_create_update, saveVideoAPi,deleteVideoAPi,config_device_audio_api, GetConfigDeviceApi, update_video_title, check_notifications, Get_consumer_logs, dashboard_logs, mark_all_read, InsertLogsApiApp
+     video_gallery, stream_video, storage_info, device_info_connected , device_type_create_update, saveVideoAPi,deleteVideoAPi,config_device_audio_api, GetConfigDeviceApi, update_video_title, check_notifications, Get_consumer_logs, dashboard_logs, mark_all_read, InsertLogsApiApp, api_agendar_calcular_qtd_videos_in_hd
 )
 from django.contrib.auth.views import LogoutView
 from .Controller.login_custom import CustomLoginView
@@ -24,6 +24,7 @@ urlpatterns = [
     path('api/video/upload/', saveVideoAPi , name='save_video_api'),
     path('api/config/device/<str:hostname>/', GetConfigDeviceApi , name='config_device_api'),
     path('api/config/device/audio/<str:hostname>/', config_device_audio_api , name='config_device_audio_api'),
+    path('api/calcular/',api_agendar_calcular_qtd_videos_in_hd , name='api_calcular'),
     path('api/notifications/check/', check_notifications, name='check_notifications'),
     path('api/notifications/mark-read-all/', mark_all_read, name='mark_all_read'),
     path('api/logs/',InsertLogsApiApp, name='api_logs'),

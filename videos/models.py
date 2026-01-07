@@ -49,7 +49,19 @@ class Video(models.Model):
             super().save(update_fields=['thumbnail'])
         except Exception as e:
             print(f"Erro ao gerar thumbnail: {e}")
-    
+
+class ConfiguracaoParaCalculoGravacao(models.Model):
+    tamanho_hd_gb = models.FloatField(default=10, verbose_name="Tamanho do HD (GB)")
+    tamanho_video_mb = models.FloatField(default=13.1, verbose_name="Tamanho do Vídeo (MB)")
+    duracao_video_min = models.FloatField(default=10, verbose_name="Duração do Vídeo (min)")
+
+    hora_inicio = models.TimeField(verbose_name="Início da Gravação", default="08:30")
+    hora_fim = models.TimeField(verbose_name="Fim da Gravação", default="20:00")
+
+    def __str__(self):
+        return f"Configuração (HD: {self.tamanho_hd_gb}GB | {self.hora_inicio} - {self.hora_fim})"
+
+
 class CompiledVideo(models.Model):
     file = models.FileField(upload_to='videos/compilados/')
     created_at = models.DateTimeField(auto_now_add=True)
