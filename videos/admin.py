@@ -83,13 +83,13 @@ class DeviceAdmin(admin.ModelAdmin):
 
 @admin.register(Video)
 class VideoAdmin(admin.ModelAdmin):
-    list_display = ('id', 'created_at', 'duration',  'processed')
+    list_display = ('id', 'created_at', 'duration',)
     ordering = ('-created_at',)
     readonly_fields = ('created_at',)
 
     fieldsets = (
         ("Informações do Vídeo", {
-            "fields": ("file", "duration", "processed")
+            "fields": ("file_Server", "duration", "processed")
         }),
         ("Datas", {
             "fields": ("created_at",),

@@ -5,50 +5,65 @@ import os
 import subprocess
 
 
+# class Video(models.Model):
+#     title = models.CharField(max_length=255, blank=True, null=True, verbose_name="Título") # Novo
+#     file = models.FileField(upload_to='videos/capturas/')
+#     thumbnail = models.ImageField(upload_to='videos/thumbnails/', blank=True, null=True) # Novo
+#     created_at = models.DateTimeField(default=timezone.now)
+#     duration = models.DurationField()
+#     processed = models.BooleanField(default=False)
+    
+#     class Meta:
+#         ordering = ['-created_at']
+
+#     def save(self, *args, **kwargs):
+#         if not self.title:
+#             self.title = f"Vídeo #{self.pk}" if self.pk else "Novo Vídeo"
+            
+#         super().save(*args, **kwargs)
+        
+#         # Gera thumbnail se não existir e o arquivo de vídeo existir
+#         if self.file and not self.thumbnail:
+#             self.generate_thumbnail()
+
+#     def generate_thumbnail(self):
+#         """Gera uma thumbnail usando FFmpeg"""
+#         try:
+#             video_path = self.file.path
+#             base_name = os.path.basename(video_path)
+#             thumb_name = os.path.splitext(base_name)[0] + '.jpg'
+#             thumb_rel_path = os.path.join('videos', 'thumbnails', thumb_name)
+#             thumb_full_path = os.path.join(settings.MEDIA_ROOT, 'videos', 'thumbnails', thumb_name)
+
+#             os.makedirs(os.path.dirname(thumb_full_path), exist_ok=True)
+
+#             cmd = [
+#                 'ffmpeg', '-y', '-i', video_path, 
+#                 '-ss', '00:00:01.000', '-vframes', '1', 
+#                 thumb_full_path
+#             ]
+#             subprocess.check_call(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+#             # Salva o caminho no banco (sem chamar save() recursivamente)
+#             self.thumbnail.name = thumb_rel_path
+#             super().save(update_fields=['thumbnail'])
+#         except Exception as e:
+#             print(f"Erro ao gerar thumbnail: {e}")
+
+
 class Video(models.Model):
-    title = models.CharField(max_length=255, blank=True, null=True, verbose_name="Título") # Novo
-    file = models.FileField(upload_to='videos/capturas/')
-    thumbnail = models.ImageField(upload_to='videos/thumbnails/', blank=True, null=True) # Novo
+    title = models.CharField(max_length=255, blank=True, null=True, verbose_name="Título")
+    file_Server = models.CharField(max_length=255, null=False, verbose_name="Nome do Arquivo no Servidor") 
+    thumbnail = models.ImageField(upload_to='videos/thumbnails/', blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     duration = models.DurationField()
-    processed = models.BooleanField(default=False)
-    
+
     class Meta:
         ordering = ['-created_at']
+    
+    def __str__(self):
+        return self.title if self.title else f"Vídeo #{self.pk}"
 
-    def save(self, *args, **kwargs):
-        if not self.title:
-            self.title = f"Vídeo #{self.pk}" if self.pk else "Novo Vídeo"
-            
-        super().save(*args, **kwargs)
-        
-        # Gera thumbnail se não existir e o arquivo de vídeo existir
-        if self.file and not self.thumbnail:
-            self.generate_thumbnail()
-
-    def generate_thumbnail(self):
-        """Gera uma thumbnail usando FFmpeg"""
-        try:
-            video_path = self.file.path
-            base_name = os.path.basename(video_path)
-            thumb_name = os.path.splitext(base_name)[0] + '.jpg'
-            thumb_rel_path = os.path.join('videos', 'thumbnails', thumb_name)
-            thumb_full_path = os.path.join(settings.MEDIA_ROOT, 'videos', 'thumbnails', thumb_name)
-
-            os.makedirs(os.path.dirname(thumb_full_path), exist_ok=True)
-
-            cmd = [
-                'ffmpeg', '-y', '-i', video_path, 
-                '-ss', '00:00:01.000', '-vframes', '1', 
-                thumb_full_path
-            ]
-            subprocess.check_call(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
-            # Salva o caminho no banco (sem chamar save() recursivamente)
-            self.thumbnail.name = thumb_rel_path
-            super().save(update_fields=['thumbnail'])
-        except Exception as e:
-            print(f"Erro ao gerar thumbnail: {e}")
 
 class ConfiguracaoParaCalculoGravacao(models.Model):
     tamanho_hd_gb = models.FloatField(default=10, verbose_name="Tamanho do HD (GB)")
