@@ -170,6 +170,7 @@ class Log(models.Model):
     CLIENT_CHOICES = (
         ('server', 'Server'),
         ('app', 'App'),
+        ('server_ftp', 'Server_FTP'),
     )
 
     client = models.CharField(

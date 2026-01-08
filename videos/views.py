@@ -352,12 +352,25 @@ def Get_consumer_logs(request):
 def InsertLogsApiApp(request):
     instanceMensagensLogs = MensagensLogs()
     mensagem_app = request.POST.get('mensagemErro', '') 
+    Type_client = request.POST.get('type_user', '')
     mensagem_erro:str = ''
 
     if not mensagem_app:
         mensagem_erro = 'Falha ao recuperar a mensagem de erro do aplicativo'
 
-    if not instanceMensagensLogs.execute_log_error(LogsDto.APP, mensagem_erro):
+    if not Type_client:
+        mensagem_erro += 'Falha ao recuperar o tipo de cliente que enviou a mensagem de erro'
+
+    match Type_client.lower():
+        case 'server':
+            log_type = LogsDto.SERVER
+        case 'server_ftp':
+            log_type = LogsDto.SERVER_FTP
+        case _:
+            log_type = LogsDto.APP
+
+
+    if not instanceMensagensLogs.execute_log_error(log_type, mensagem_erro):
         mensagem_erro +=  ' - ' + instanceMensagensLogs.strErr
 
     if not instanceMensagensLogs.execute_notification('Foi identificado um erro no fluxo de execução do aplicativo. Consulte os logs para mais detalhes', notifyDto.warning):
