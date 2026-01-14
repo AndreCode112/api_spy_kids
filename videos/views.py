@@ -376,11 +376,10 @@ def Get_consumer_logs(request):
 @require_http_methods(["POST"])
 def InsertLogsApiApp(request):
     instanceMensagensLogs = MensagensLogs()
-    mensagem_app = request.POST.get('mensagemErro', '') 
+    mensagem_erro:str = request.POST.get('mensagemErro', '')
     Type_client = request.POST.get('type_user', '')
-    mensagem_erro:str = ''
 
-    if not mensagem_app:
+    if not mensagem_erro:
         mensagem_erro = 'Falha ao recuperar a mensagem de erro do aplicativo'
 
     if not Type_client:
@@ -400,8 +399,5 @@ def InsertLogsApiApp(request):
 
     if not instanceMensagensLogs.execute_notification('Foi identificado um erro no fluxo de execução do aplicativo. Consulte os logs para mais detalhes', notifyDto.warning):
         mensagem_erro +=  ' - ' + instanceMensagensLogs.strErr
-
-    if mensagem_erro:
-        return JsonResponse({'Sucesso': False, 'mensagem': mensagem_erro})
 
     return JsonResponse({'Sucesso': True, 'mensagem': ''})

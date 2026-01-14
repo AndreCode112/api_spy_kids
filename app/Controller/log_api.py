@@ -10,7 +10,8 @@ class LogApi:
     def InsertLogServer(self, mensagem:str) -> bool:
         try:
             payload = {
-                "mensagemErro": mensagem
+                "mensagemErro": mensagem,
+                'type_user': 'app'
             }
 
             response = requests.post(self.Tparams.APIINSERTLOGONSERVER, data=payload, timeout=10)

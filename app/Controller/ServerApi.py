@@ -51,7 +51,7 @@ class ServerRequestApi:
                 response = requests.post(self.Tparams.UPLOAD_EXTERNALSERVER_URL, files=files)
 
             json_response = response.json()
-            status = json_response.get("status", False)
+            status = json_response.get("sucesso", False)
             if not status:
                 self.strErr = f"Erro no upload para servidor externo: {json_response.get('message', 'Sem mensagem de erro')}"
                 return False

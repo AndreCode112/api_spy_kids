@@ -61,4 +61,4 @@ if __name__ == "__main__":
         instanceLogApi: LogApi =  LogApi()
         if not instanceLogApi.InsertLogServer(mensagem_erro):
             logs(mensagem_erro).log_messageTxt()
-        sys.exit(1)
+        sys.exit(0)
