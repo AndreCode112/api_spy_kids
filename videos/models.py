@@ -62,14 +62,6 @@ class Video(models.Model):
     def __str__(self):
         return self.title if self.title else f"Vídeo #{self.pk}"
     
-    def save(self, *args, **kwargs):
-        if not self.title:
-            self.title = f"Vídeo #{self.pk}" if self.pk else "Novo Vídeo"
-            
-        super().save(*args, **kwargs)
-        
-        if not self.thumbnail:
-            self.generate_thumbnail()
             
     def get_video_url(self):
         base_url = "https://rcamgeo.com.br/api/video.php"
