@@ -10,7 +10,7 @@
             <div class="video-card" data-video-id="{{ video.id }}">
                 <div class="video-thumbnail">
                     {% if video.thumbnail %}
-                        <img src="{{ video.thumbnail.url }}" alt="Thumb" loading="lazy">
+                        <img src="{{ video.thumbnail }}" alt="Thumb" loading="lazy">
                     {% else %}
                         <div class="no-thumb-placeholder">🎬</div>
                     {% endif %}

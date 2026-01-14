@@ -1,10 +1,5 @@
-import shutil
 from django.db import models
 from django.utils import timezone
-from django.conf import settings
-import os
-import subprocess
-
 
 # class Video(models.Model):
 #     title = models.CharField(max_length=255, blank=True, null=True, verbose_name="Título") # Novo
@@ -54,8 +49,10 @@ import subprocess
 
 class Video(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True, verbose_name="Título")
+   
     file_Server = models.CharField(max_length=255, null=False, verbose_name="Nome do Arquivo no Servidor") 
-    thumbnail = models.ImageField(upload_to='videos/thumbnails/', blank=True, null=True, verbose_name="Thumbnail do Vídeo")
+    url_php_server = models.URLField(default='https://rcamgeo.com.br/api/') 
+
     created_at = models.DateTimeField(default=timezone.now)
     duration = models.DurationField()
 
@@ -73,35 +70,40 @@ class Video(models.Model):
         
         if not self.thumbnail:
             self.generate_thumbnail()
+            
+    def get_video_url(self):
+        base_url = "https://rcamgeo.com.br/api/video.php"
+        return f"{base_url}?file={self.file_Server}"
+    
 
     
-    def generate_thumbnail(self):
-        try:
-            video_path = self.file.path
-            base_name = os.path.basename(video_path)
-            thumb_name = os.path.splitext(base_name)[0] + '.jpg'
+    # def generate_thumbnail(self):
+    #     try:
+    #         video_path = self.file.path
+    #         base_name = os.path.basename(video_path)
+    #         thumb_name = os.path.splitext(base_name)[0] + '.jpg'
 
-            thumb_rel_path = os.path.join('videos', 'thumbnails', thumb_name)
-            thumb_full_path = os.path.join(settings.MEDIA_ROOT, thumb_rel_path)
+    #         thumb_rel_path = os.path.join('videos', 'thumbnails', thumb_name)
+    #         thumb_full_path = os.path.join(settings.MEDIA_ROOT, thumb_rel_path)
 
-            default_thumb_path = os.path.join(
-                settings.MEDIA_ROOT,
-                'videos',
-                'thumbnails',
-                'default.jpg'
-            )
+    #         default_thumb_path = os.path.join(
+    #             settings.MEDIA_ROOT,
+    #             'videos',
+    #             'thumbnails',
+    #             'default.jpg'
+    #         )
 
-            os.makedirs(os.path.dirname(thumb_full_path), exist_ok=True)
+    #         os.makedirs(os.path.dirname(thumb_full_path), exist_ok=True)
 
-            # Copia a imagem padrão
-            shutil.copy(default_thumb_path, thumb_full_path)
+    #         # Copia a imagem padrão
+    #         shutil.copy(default_thumb_path, thumb_full_path)
 
-            # Salva apenas o campo thumbnail
-            self.thumbnail.name = thumb_rel_path
-            super().save(update_fields=['thumbnail'])
+    #         # Salva apenas o campo thumbnail
+    #         self.thumbnail.name = thumb_rel_path
+    #         super().save(update_fields=['thumbnail'])
 
-        except Exception as e:
-            print(f"Erro ao definir thumbnail padrão: {e}")
+    #     except Exception as e:
+    #         print(f"Erro ao definir thumbnail padrão: {e}")
 
 
 class ConfiguracaoParaCalculoGravacao(models.Model):

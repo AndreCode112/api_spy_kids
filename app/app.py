@@ -42,7 +42,13 @@ if __name__ == "__main__":
             if not instanceCommandFFMPEG.capture_video():
                 raise Exception(instanceCommandFFMPEG.strErr)
 
-            if not instanceServerRequestApi._upload_video():
+            #upload do servidor princiapl
+
+            # if not instanceServerRequestApi._upload_video():
+            #     raise Exception(instanceServerRequestApi.strErr)
+
+            #upload do arquivo para server externo. 
+            if not instanceServerRequestApi._upload_video_external_server():
                 raise Exception(instanceServerRequestApi.strErr)
 
             sleep(3)
