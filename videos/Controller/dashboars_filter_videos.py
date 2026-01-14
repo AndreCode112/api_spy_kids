@@ -4,7 +4,6 @@ from itertools import groupby
 from django.core.paginator import Paginator
 from django.utils.dateparse import parse_date
 from rest_framework import status
-from django.templatetags.static import static
 
 
 
@@ -45,7 +44,6 @@ class DashboardsFilterVideos:
                 })
 
             videos_json = []
-            thumb_url = request.build_absolute_uri(static('videos/thumbnail/spykids.jpg'))
             for video in page_obj:
 
                 videos_json.append({
@@ -53,7 +51,6 @@ class DashboardsFilterVideos:
                     'url': video.get_video_url(),
                     'title': video.title or f"Vídeo #{video.id}",
                     'date': video.created_at.strftime('%Y-%m-%d'),
-                    'thumbnail': thumb_url 
                 })
 
             self.response = {

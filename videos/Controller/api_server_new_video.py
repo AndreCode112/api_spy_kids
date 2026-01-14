@@ -2,6 +2,9 @@ from rest_framework import status
 from django.http import HttpRequest
 from videos.models import Video
 from datetime import timedelta
+from .logs_notification import MensagensLogs
+from videos.Dto.notifyDto import notifyDto
+from videos.Dto.logDto import LogsDto
 class uploadVideoExtenalServer:
     def __init__(self):
         self.strErr:str = ''
@@ -20,6 +23,10 @@ class uploadVideoExtenalServer:
                 file_Server=file_name_server,
                 duration=timedelta(seconds=int(video_duration)),
             )
+            
+            instanceMensagensLogs:MensagensLogs = MensagensLogs()
+            if not instanceMensagensLogs.execute_notification('Um novo vídeo está disponível para visualização.', notifyDto.success):
+                instanceMensagensLogs.execute_log_error(LogsDto.SERVER, 'Erro ao tentar registrar a notificação de vídeo recebido: ' + instanceMensagensLogs.strErr)
 
             self.strErr = ''
             self.status = status.HTTP_200_OK

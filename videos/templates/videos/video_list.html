@@ -9,11 +9,7 @@
             {% for video in group.videos %}
             <div class="video-card" data-video-id="{{ video.id }}">
                 <div class="video-thumbnail">
-                    {% if video.thumbnail %}
-                        <img src="{{ video.thumbnail }}" alt="Thumb" loading="lazy">
-                    {% else %}
-                        <div class="no-thumb-placeholder">🎬</div>
-                    {% endif %}
+                    <img src="{% static 'videos/thumbnail/spykids.jpg' %}" alt="Thumb Padrão" loading="lazy">
                     <div class="play-overlay" onclick="playVideo({{ video.id }}, '{{ group.date|date:'Y-m-d' }}')">▶</div>
                 </div>
 
