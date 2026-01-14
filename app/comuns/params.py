@@ -18,20 +18,13 @@ class Tparams:
     CONNECTIONINFO_URL = f"{API_BASE_URL}/api/devices/status/"
 
     videoUploadPathName = "records_spy_kids"
-    thubnailUploadPathName = "thumbnails_spy_kids"
-
 
     if not os.path.exists(videoUploadPathName):
         os.makedirs(videoUploadPathName)
 
-    if not os.path.exists(thubnailUploadPathName):
-        os.makedirs(thubnailUploadPathName)
-
     VIDEO_FILENAME = "video.temp.mp4"
 
     pathVideoUploadSave = videoUploadPathName + "/" + VIDEO_FILENAME
-
-
 
     audio:str =''
     duration_capture:int
