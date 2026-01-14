@@ -64,7 +64,7 @@ class Video(models.Model):
     
             
     def get_video_url(self):
-        base_url = "https://rcamgeo.com.br/api/video.php"
+        base_url = "https://rcamgeo.com.br/api/api_get_videos.php"
         return f"{base_url}?file={self.file_Server}"
     
 
