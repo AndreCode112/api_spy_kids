@@ -1,4 +1,5 @@
 import os
+import subprocess
 import requests
 from comuns.params import Tparams
 from Controller.infoOs import DtoInfoDisp
@@ -35,6 +36,48 @@ class ServerRequestApi:
             return False    
         
 
+    def _upload_video_external_server(self) -> bool:
+        try:
+
+            if not os.path.exists(self.Tparams.pathVideoUploadSave):
+                self.strErr = 'Arquivo de vídeo não encontrado.'
+                return False
+
+            with open(self.Tparams.pathVideoUploadSave, "rb") as f:
+                files = {
+                    "arquivo": (os.path.basename(self.Tparams.pathVideoUploadSave), f)
+                }
+
+                response = requests.post(self.Tparams.UPLOAD_EXTERNALSERVER_URL, files=files)
+
+            json_response = response.json()
+            status = json_response.get("status", False)
+            if not status:
+                self.strErr = f"Erro no upload para servidor externo: {json_response.get('message', 'Sem mensagem de erro')}"
+                return False
+            
+            file_name_server = json_response.get("arquivo", "")
+
+            if not file_name_server:
+                self.strErr = "Nome do arquivo no servidor não retornado. cheque os logs do server externo."
+                return False
+
+            data = {
+                "file_name_server": file_name_server,
+                "duration": DtoConfigDevice.tempo
+            }
+            response = requests.post(
+                self.Tparams.UPLOAD_URL,
+                data=data,
+                timeout=10,
+            )
+            self.strErr = ''
+            return True
+        
+        except Exception as e:
+            self.strErr = f"Erro ao enviar vídeo para servidor externo: {e}"
+            return False
+
     def _send_status_connected(self) -> bool:
         try:
             payload = {
@@ -45,7 +88,6 @@ class ServerRequestApi:
             }
     
             response = requests.post(self.Tparams.CONNECTIONINFO_URL, json=payload, timeout=10)
-
             
             if response.status_code != 200:
                 self.strErr = f"Erro ao enviar status: {response.status_code} - {response.text}"

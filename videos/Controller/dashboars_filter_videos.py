@@ -45,7 +45,7 @@ class DashboardsFilterVideos:
 
             videos_json = []
             for video in page_obj:
-                thumb_url = video.thumbnail.url if video.thumbnail else ""
+                 thumb_url = video.thumbnail.url if video.thumbnail else ""
                 videos_json.append({
                     'id': video.id,
                     'url': video.file.url,

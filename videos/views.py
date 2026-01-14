@@ -18,6 +18,7 @@ from .Controller.edit_title_video import editVideoTitle
 from .Controller.dashboars_filter_videos import DashboardsFilterVideos
 from .Controller.consumer_logs_dashboard import ConsumerDashboardLog
 from .Controller.agendar_calcular_videos_in_hd import AgendarCalcularQtdVideosInHD
+from .Controller.api_server_new_video import uploadVideoExtenalServer
 
 from .Dto.logDto import LogsDto
 from .Dto.notifyDto import notifyDto
@@ -233,14 +234,40 @@ def GetConfigDeviceApi(request, hostname):
 
 
 
+#MetodoAntigo para salvar video via API
+# @require_http_methods(["POST"])
+# @api_view(['POST'])
+# def saveVideoAPi(request):
+#     instanceApiVideo: ApiVideo = ApiVideo()
+#     if not instanceApiVideo._Post(request):
+#         instanceMensagensLogs = MensagensLogs()
+#         mensagem_erro = instanceApiVideo.StrErr
+
+#         if not instanceMensagensLogs.execute_log_error(LogsDto.SERVER, mensagem_erro):
+#            mensagem_erro +=  ' - ' + instanceMensagensLogs.strErr
+
+#         if not instanceMensagensLogs.execute_notification('Foi detectada uma tentativa falha de um dispositivo ao salvar um vídeo. Verifique o log para mais detalhes', notifyDto.warning):
+#             mensagem_erro +=  ' - ' + instanceMensagensLogs.strErr
+
+
+#         return JsonResponse({
+#             'success': False,
+#             'message': mensagem_erro
+#         }, status=instanceApiVideo.status)
+    
+#     return JsonResponse({
+#         'success': True,
+#         'message': 'Vídeo salvo com sucesso'
+#     }, status=instanceApiVideo.status)
+
 
 @require_http_methods(["POST"])
 @api_view(['POST'])
 def saveVideoAPi(request):
-    instanceApiVideo: ApiVideo = ApiVideo()
-    if not instanceApiVideo._Post(request):
+    instanceUploadVideoExtenalServer: uploadVideoExtenalServer = uploadVideoExtenalServer()
+    if not instanceUploadVideoExtenalServer.upload_video(request):
         instanceMensagensLogs = MensagensLogs()
-        mensagem_erro = instanceApiVideo.StrErr
+        mensagem_erro = instanceUploadVideoExtenalServer.strErr
 
         if not instanceMensagensLogs.execute_log_error(LogsDto.SERVER, mensagem_erro):
            mensagem_erro +=  ' - ' + instanceMensagensLogs.strErr
@@ -252,14 +279,12 @@ def saveVideoAPi(request):
         return JsonResponse({
             'success': False,
             'message': mensagem_erro
-        }, status=instanceApiVideo.status)
+        }, status=instanceUploadVideoExtenalServer.status)
     
     return JsonResponse({
         'success': True,
         'message': 'Vídeo salvo com sucesso'
-    }, status=instanceApiVideo.status)
-
-
+    }, status=instanceUploadVideoExtenalServer.status)
 
 @require_http_methods(["POST"])
 @api_view(['POST'])
