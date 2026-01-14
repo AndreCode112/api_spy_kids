@@ -83,8 +83,8 @@ WSGI_APPLICATION = 'main.wsgi.application'
 #     }
 # }
 
-# env_path = os.path.join(BASE_DIR, '.env')
-# load_dotenv(env_path)
+env_path = os.path.join(BASE_DIR, '.env')
+load_dotenv(env_path)
 
 DATABASES = {
     'default': {
