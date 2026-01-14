@@ -1,7 +1,7 @@
 from rest_framework import status
 from django.http import HttpRequest
 from videos.models import Video
-
+from datetime import timedelta
 class uploadVideoExtenalServer:
     def __init__(self):
         self.strErr:str = ''
@@ -18,7 +18,7 @@ class uploadVideoExtenalServer:
 
             Video.objects.create(
                 file_Server=file_name_server,
-                duration=int(video_duration),
+                duration=timedelta(seconds=int(video_duration)),
             )
 
             self.strErr = ''
