@@ -52,7 +52,7 @@ class ApiVideo:
             self.status = status.HTTP_500_INTERNAL_SERVER_ERROR
             return False
         
-    def _Delete(self, request, video_id):
+    def _Delete(self, video_id):
         """API para deletar vídeo"""
         try:
             video = get_object_or_404(Video, id=video_id)

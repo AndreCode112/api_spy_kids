@@ -151,7 +151,7 @@ def downloadVideoApi(request, video_id):
         if not instanceMensagensLogs.execute_log_error(LogsDto.SERVER, mensagem_erro):
            mensagem_erro +=  ' - ' + instanceMensagensLogs.strErr
 
-        if not instanceMensagensLogs.execute_notification('Não foi possível realizar o download do video com id: ' + video_id , notifyDto.error):
+        if not instanceMensagensLogs.execute_notification('Não foi possível realizar o download do video com id: ' + str(video_id) , notifyDto.error):
             mensagem_erro +=  ' - ' + instanceMensagensLogs.strErr
 
         return JsonResponse({
@@ -167,14 +167,14 @@ def downloadVideoApi(request, video_id):
 @api_view(['DELETE'])
 def deleteVideoAPi(request, video_id):
     instanceApiVideo: ApiVideo = ApiVideo()
-    if not instanceApiVideo._Delete(request, video_id):
+    if not instanceApiVideo._Delete(video_id):
         instanceMensagensLogs = MensagensLogs()
 
         mensagem_erro = instanceApiVideo.StrErr
         if not instanceMensagensLogs.execute_log_error(LogsDto.SERVER, mensagem_erro):
            mensagem_erro +=  ' - ' + instanceMensagensLogs.strErr
 
-        if not instanceMensagensLogs.execute_notification('Não foi possível Deletar o video com id: ' + video_id , notifyDto.error):
+        if not instanceMensagensLogs.execute_notification('Não foi possível Deletar o video com id: ' + str(video_id) , notifyDto.error):
             mensagem_erro +=  ' - ' + instanceMensagensLogs.strErr
 
 

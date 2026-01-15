@@ -26,7 +26,7 @@ class storageServerApi:
 
     def _GetStorageInfo(self) -> bool:
         try:
-            TOTAL_QUOTA_GB = 0.5 
+            TOTAL_QUOTA_GB = 5
             
             cmd = "du -s -B 1 /tmp ~/.[!.]* ~/* | awk '{s+=$1}END{print s}'"
             
