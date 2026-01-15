@@ -162,21 +162,60 @@ button {
 
 
 /* Botões Primários (Ação) */
-/* .btn-action, .btn-play, .btn-watch-series, .btn-confirm {
-    background: var(--text-main);
-    color: #000;
-    padding: 10px 24px;
-    border-radius: var(--radius-sm);
+.btn-action {
+    background: linear-gradient(
+        135deg,
+        var(--text-main),
+        color-mix(in srgb, var(--text-main) 85%, #ffffff)
+    );
+    color: #0a0a0a;
+
+    padding: 12px 28px;
+    border-radius: calc(var(--radius-sm) + 2px);
+
     font-weight: 600;
     font-size: 14px;
-    letter-spacing: 0.5px;
-} */
+    letter-spacing: 0.6px;
 
-/* .btn-action:hover, .btn-play:hover {
-    background: #e6e6e6;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
-} */
+    border: none;
+    cursor: pointer;
+
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.08),
+        0 6px 20px rgba(0, 0, 0, 0.12);
+
+    transition:
+        background 0.35s ease,
+        transform 0.25s ease,
+        box-shadow 0.35s ease;
+}
+
+.btn-action:hover {
+    background: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--text-main) 90%, #ffffff),
+        #ffffff
+    );
+
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 8px 28px rgba(0, 0, 0, 0.18);
+}
+
+.btn-action:active {
+    transform: translateY(-1px);
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-action:focus-visible {
+    outline: none;
+    box-shadow:
+        0 0 0 3px color-mix(in srgb, var(--text-main) 40%, transparent),
+        0 8px 28px rgba(0, 0, 0, 0.18);
+}
+
 
 /* Botões Secundários/Destrutivos */
 /* .btn-delete, .btn-cancel {
