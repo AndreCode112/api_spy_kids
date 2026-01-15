@@ -30,7 +30,7 @@
 
             <form method="post" action="{% url 'logout' %}" style="display: inline;">
                 {% csrf_token %}
-                <button type="submit" class="btn-logout">Sair</button>
+                <button type="submit" class="btn-ui btn-icon-glass">Sair</button>
             </form>
         </div>
     </header>
@@ -65,8 +65,8 @@
             <span class="separator">até</span>
             <input type="date" id="endDate" class="date-input" title="Data Fim">
         </div>
-        <button class="btn-action btn-sm" onclick="filterByDate()">Filtrar Datas</button>
-        <button class="btn-cancel btn-sm" onclick="clearDateFilter()">Limpar</button>
+        <button class="btn-ui btn-icon-glass" onclick="filterByDate()">Filtrar Datas</button>
+        <button class="btn-ui btn-icon-glass" onclick="clearDateFilter()">Limpar</button>
     </div>
     
     <div id="video-list-container">

@@ -67,17 +67,22 @@ class ApiVideo:
             params = {'file': video.file_Server}
             
             resp = requests.delete(url_request, params=params, headers=headers)
-            
-            if not resp.status_code == 200:
-                self.StrErr ="erro ao tentar realizar a request para deletar o video selecionado"
-                self.status =  status.HTTP_400_BAD_REQUEST
-                return False
                 
-            video.delete()
+            match resp.status_code:
+                case 200 | 404:
+                    video.delete()
+                    self.StrErr = ""
+                    self.status = status.HTTP_200_OK
+                    return True
+                case _:
+                    self.StrErr = (
+                        "Erro ao tentar realizar a request para deletar "
+                        "o vídeo selecionado."
+                    )
+                    self.status = status.HTTP_400_BAD_REQUEST
+                    return False
 
-            self.status = status.HTTP_200_OK
-            self.StrErr = ''
-            return True
+
         except Exception as e:
             self.StrErr = "Erro ao tentar deletar o video: " + str(e)
             self.status = status.HTTP_500_INTERNAL_SERVER_ERROR
