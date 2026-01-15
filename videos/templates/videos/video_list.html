@@ -43,7 +43,11 @@
                             <span>Assistir</span>
                         </button>
 
-                        <div class="actions-group">
+                        <div class="actions-group"> 
+                            <button class="btn-ui btn-icon-glass" onclick="executeDownload({{ video.id }})" data-tooltip="Baixar">
+                                <i class="ri-download-line"></i>
+                            </button>
+
                             <button class="btn-ui btn-icon-glass" onclick="openEditModal({{ video.id }}, '{{ video.title|escapejs }}')" data-tooltip="Editar">
                                 <i class="ri-pencil-line"></i>
                             </button>

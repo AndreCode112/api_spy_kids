@@ -7,13 +7,15 @@ from datetime import timedelta
 from .logs_notification import MensagensLogs
 from videos.Dto.notifyDto import notifyDto
 from videos.Dto.logDto import LogsDto
-
-
+import requests
+from django.http import StreamingHttpResponse
+from django.conf import settings
 
 class ApiVideo:
     def __init__(self):
         self.StrErr: str = ''
         self.status: int 
+        self.response:dict = {}
 
     def _Post(self, request:HttpRequest) -> bool:
         try:
@@ -66,4 +68,58 @@ class ApiVideo:
             self.StrErr = str(e)
             self.status = status.HTTP_500_INTERNAL_SERVER_ERROR
             return False
+        
+    def stream_generator_api_download_video(self, request):
+        try:
+            for chunk in request.iter_content(chunk_size=8192):
+                if chunk:
+                    yield chunk
+        except Exception as e:
+            self.StrErr = "Erro durante stream: {e}" 
 
+    def _downloadVideo(self, video_id:int):
+        try:
+            video = get_object_or_404(Video, id=video_id)
+
+            php_api_url = video.url_php_server + 'download.php'  
+
+
+            headers = {
+                'Referer': settings.DOMAIN,
+                'User-Agent': 'DjangoBackend/1.0'
+            }
+            
+            filename_app:str = video.file_Server
+
+            params = {
+                'file': filename_app
+            }
+
+            request = requests.get(php_api_url, params=params, headers=headers, stream=True, timeout=10)
+
+            if request.status_code != 200 and request.status_code != 206:
+                self.StrErr = "Erro no servidor de arquivos: {r.status_code}"
+                self.status = status.HTTP_400_BAD_REQUEST
+                return False                
+
+
+            response = StreamingHttpResponse(self.stream_generator_api_download_video(request), content_type=r.headers.get('Content-Type'))
+            response['Content-Disposition'] = f'attachment; filename="{video.file_Server}"'
+            
+            if 'Content-Length' in request.headers:
+                response['Content-Length'] = request.headers['Content-Length']
+
+            self.response = response
+            self.status = status.HTTP_200_OK
+            
+            return True
+
+        except requests.exceptions.RequestException as e:
+            self.StrErr = "O servidor de arquivos está indisponível."
+            self.status =  status.HTTP_503_SERVICE_UNAVAILABLE
+            return False
+        
+        except video.DoesNotExist:
+            self.StrErr = "Video não encontrado na base do servidor"
+            self.status =  status.HTTP_404_NOT_FOUND
+            return False

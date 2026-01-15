@@ -27,6 +27,7 @@ SECRET_KEY = 'django-insecure-ypt@g#e2-t1z79ezx#zh9sx@(*0)nw5^@sf_@4m$%fm#@)oe5!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 # 'SpyKids.pythonanywhere.com'
+DOMAIN = "https://spykids.pythonanywhere.com"
 ALLOWED_HOSTS = ['SpyKids.pythonanywhere.com', ]
 
 

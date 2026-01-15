@@ -83,7 +83,7 @@ class DeviceAdmin(admin.ModelAdmin):
 
 @admin.register(Video)
 class VideoAdmin(admin.ModelAdmin):
-    list_display = ('id', 'created_at', 'duration',)
+    list_display = ('id', 'created_at', 'duration', 'url_php_server')
     ordering = ('-created_at',)
     readonly_fields = ('created_at',)
 

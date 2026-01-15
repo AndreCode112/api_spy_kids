@@ -140,6 +140,29 @@ def storage_info(request):
 
 
 @login_required(login_url='/login/')
+@require_http_methods(["GET"])
+@api_view(['GET'])
+def downloadVideoApi(request, video_id):
+    instanceApiVideo: ApiVideo = ApiVideo()
+    if not instanceApiVideo._downloadVideo(video_id):
+        instanceMensagensLogs = MensagensLogs()
+
+        mensagem_erro = instanceApiVideo.StrErr
+        if not instanceMensagensLogs.execute_log_error(LogsDto.SERVER, mensagem_erro):
+           mensagem_erro +=  ' - ' + instanceMensagensLogs.strErr
+
+        if not instanceMensagensLogs.execute_notification('Não foi possível realizar o download do video com id: ' + video_id , notifyDto.error):
+            mensagem_erro +=  ' - ' + instanceMensagensLogs.strErr
+
+        return JsonResponse({
+            'success': False,
+            'message': mensagem_erro
+        }, status=instanceApiVideo.status)
+    
+    return instanceApiVideo.response
+
+
+@login_required(login_url='/login/')
 @require_http_methods(["DELETE"])
 @api_view(['DELETE'])
 def deleteVideoAPi(request, video_id):
@@ -285,6 +308,10 @@ def saveVideoAPi(request):
         'success': True,
         'message': 'Vídeo salvo com sucesso'
     }, status=instanceUploadVideoExtenalServer.status)
+    
+    
+    
+
 
 @require_http_methods(["POST"])
 @api_view(['POST'])
