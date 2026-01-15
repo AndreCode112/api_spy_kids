@@ -274,32 +274,58 @@ async function executeDelete() {
     cancelDelete();
 }
 
-// Execute download
 async function executeDownload(videoToDownload) {
     if (!videoToDownload) return;
 
     try {
         const response = await fetch(`/video/${videoToDownload}/download/`, {
-            method: 'GET', 
+            method: 'GET',
             headers: {
                 'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/json'
             }
         });
 
-        const data = await response.json();
-
-        if (!data.success) {
-            alert("não foi possivel baixar o video, cheque os logs");
+        if (!response.ok) {
+            const errorData = await response.json();
+            alert(errorData.message || "Erro desconhecido ao baixar");
             return;
         }
 
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+            const data = await response.json();
+            if (!data.success) {
+                alert(data.message);
+                return;
+            }
+        }
+
+        const blob = await response.blob();
+        
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        
+        const disposition = response.headers.get('Content-Disposition');
+        let fileName = 'video.mp4';
+        if (disposition && disposition.indexOf('filename=') !== -1) {
+            const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+            const matches = filenameRegex.exec(disposition);
+            if (matches != null && matches[1]) { 
+                fileName = matches[1].replace(/['"]/g, '');
+            }
+        }
+        
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(downloadUrl); 
     } catch (error) {
-        console.error(error);
-        alert('Erro ao tentar baixar vídeo');
+        console.error("Erro ao tentar baixar arquivo", error);
+        alert('Erro crítico ao tentar comunicar com o servidor.');
     }
 }
-
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {

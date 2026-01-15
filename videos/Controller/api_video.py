@@ -80,12 +80,10 @@ class ApiVideo:
     def _downloadVideo(self, video_id:int):
         try:
             video = get_object_or_404(Video, id=video_id)
-
             php_api_url = video.url_php_server + 'api_download_videos.php'  
 
-
             headers = {
-                'Referer': settings.DOMAIN,
+                'Referer': settings.DOMAIN, # Certifique-se que settings.DOMAIN está correto
                 'User-Agent': 'DjangoBackend/1.0'
             }
             
@@ -95,29 +93,28 @@ class ApiVideo:
                 'file': filename_app
             }
             
-            # proxies_config = {
-            #     "http": None,
-            #     "https": None,
-            # }
-
-            request = requests.get(php_api_url, 
+            resp_externa = requests.get(php_api_url, 
                                    params=params,
                                    headers=headers,
                                    stream=True, 
-                                   timeout=10,
-                                   )
+                                   timeout=10)
 
-            if request.status_code != 200 and request.status_code != 206:
-                self.StrErr = "Erro no servidor de arquivos: {r.status_code}"
+            if resp_externa.status_code != 200 and resp_externa.status_code != 206:
+                self.StrErr = f"Erro no servidor de arquivos: {resp_externa.status_code}"
                 self.status = status.HTTP_400_BAD_REQUEST
                 return False                
 
-
-            response = StreamingHttpResponse(self.stream_generator_api_download_video(request), content_type=r.headers.get('Content-Type'))
+            content_type = resp_externa.headers.get('Content-Type', 'application/octet-stream')
+            
+            response = StreamingHttpResponse(
+                self.stream_generator_api_download_video(resp_externa), 
+                content_type=content_type
+            )
+            
             response['Content-Disposition'] = f'attachment; filename="{video.file_Server}"'
             
-            if 'Content-Length' in request.headers:
-                response['Content-Length'] = request.headers['Content-Length']
+            if 'Content-Length' in resp_externa.headers:
+                response['Content-Length'] = resp_externa.headers['Content-Length']
 
             self.response = response
             self.status = status.HTTP_200_OK
@@ -126,10 +123,10 @@ class ApiVideo:
 
         except requests.exceptions.RequestException as e:
             self.StrErr = f"O servidor de arquivos está indisponível: {e}"
-            self.status =  status.HTTP_503_SERVICE_UNAVAILABLE
+            self.status = status.HTTP_503_SERVICE_UNAVAILABLE
             return False
         
-        except video.DoesNotExist:
+        except Video.DoesNotExist: # Video com V maiusculo (Classe)
             self.StrErr = "Video não encontrado na base do servidor"
-            self.status =  status.HTTP_404_NOT_FOUND
+            self.status = status.HTTP_404_NOT_FOUND
             return False
