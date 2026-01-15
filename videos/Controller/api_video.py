@@ -115,7 +115,7 @@ class ApiVideo:
             return True
 
         except requests.exceptions.RequestException as e:
-            self.StrErr = "O servidor de arquivos está indisponível."
+            self.StrErr = f"O servidor de arquivos está indisponível: {e}"
             self.status =  status.HTTP_503_SERVICE_UNAVAILABLE
             return False
         
