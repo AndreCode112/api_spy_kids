@@ -296,7 +296,7 @@ async function executeDownload(videoToDownload) {
 
     } catch (error) {
         console.error(error);
-        alert('Erro ao excluir/baixar vídeo');
+        alert('Erro ao tentar baixar vídeo');
     }
 }
 
