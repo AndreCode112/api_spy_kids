@@ -56,17 +56,40 @@ class ApiVideo:
         """API para deletar vídeo"""
         try:
             video = get_object_or_404(Video, id=video_id)
+
+            url_request =video.url_php_server + 'api_deletar_video.php'
+
+            headers = {
+                'Referer': settings.DOMAIN,
+                'User-Agent': 'DjangoBackend/1.0'
+            }
+            
+            params = {'file': video.file_Server}
+            
+            resp = requests.delete(url_request, params=params, headers=headers)
+            
+            if not resp.status_code == 200:
+                self.StrErr ="erro ao tentar realizar a request para deletar o video selecionado"
+                self.status =  status.HTTP_400_BAD_REQUEST
+                return False
+
             
             if video.file:
                 video.file.delete()
+                
             video.delete()
 
             self.status = status.HTTP_200_OK
             self.StrErr = ''
             return True
         except Exception as e:
-            self.StrErr = str(e)
+            self.StrErr = "Erro ao tentar deletar o video: " + str(e)
             self.status = status.HTTP_500_INTERNAL_SERVER_ERROR
+            return False
+        
+        except Video.DoesNotExist:
+            self.StrErr = "Video não encontrado na base do servidor"
+            self.status = status.HTTP_404_NOT_FOUND
             return False
         
     def stream_generator_api_download_video(self, request):
@@ -126,7 +149,7 @@ class ApiVideo:
             self.status = status.HTTP_503_SERVICE_UNAVAILABLE
             return False
         
-        except Video.DoesNotExist: # Video com V maiusculo (Classe)
+        except Video.DoesNotExist:
             self.StrErr = "Video não encontrado na base do servidor"
             self.status = status.HTTP_404_NOT_FOUND
             return False
