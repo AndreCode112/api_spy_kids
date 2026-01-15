@@ -94,8 +94,13 @@ class ApiVideo:
             params = {
                 'file': filename_app
             }
+            
+            proxies_config = {
+                "http": None,
+                "https": None,
+            }
 
-            request = requests.get(php_api_url, params=params, headers=headers, stream=True, timeout=10)
+            request = requests.get(php_api_url, params=params, headers=headers, stream=True, timeout=10, proxies=proxies_config)
 
             if request.status_code != 200 and request.status_code != 206:
                 self.StrErr = "Erro no servidor de arquivos: {r.status_code}"
