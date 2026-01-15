@@ -72,10 +72,6 @@ class ApiVideo:
                 self.StrErr ="erro ao tentar realizar a request para deletar o video selecionado"
                 self.status =  status.HTTP_400_BAD_REQUEST
                 return False
-
-            
-            if video.file:
-                video.file.delete()
                 
             video.delete()
 
