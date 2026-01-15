@@ -81,7 +81,7 @@ class ApiVideo:
         try:
             video = get_object_or_404(Video, id=video_id)
 
-            php_api_url = video.url_php_server + 'download.php'  
+            php_api_url = video.url_php_server + 'api/api_download_videos.php'  
 
 
             headers = {
