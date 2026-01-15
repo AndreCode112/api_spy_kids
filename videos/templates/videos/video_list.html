@@ -1,4 +1,5 @@
 {% load static %}
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 {% if history_groups %}
     {% for group in history_groups %}
     <div class="date-group mb-4">
@@ -36,10 +37,21 @@
                         {% widthratio video.duration.total_seconds 60 1 %} min
                     </div>
                     
-                    <div class="video-actions">
-                        <button class="btn-play" onclick="playVideo({{ video.id }}, '{{ group.date|date:'Y-m-d' }}')">Assistir</button>
-                        <button class="btn-delete" onclick="confirmDelete({{ video.id }})">🗑</button>
-                        <button class="btn-edit" onclick="openEditModal({{ video.id }}, '{{ video.title|escapejs }}')" title="Editar Título">✎</button>
+                   <div class="video-actions">
+                        <button class="btn-ui btn-primary-glass" onclick="playVideo({{ video.id }}, '{{ group.date|date:'Y-m-d' }}')">
+                            <i class="ri-play-fill"></i>
+                            <span>Assistir</span>
+                        </button>
+
+                        <div class="actions-group">
+                            <button class="btn-ui btn-icon-glass" onclick="openEditModal({{ video.id }}, '{{ video.title|escapejs }}')" data-tooltip="Editar">
+                                <i class="ri-pencil-line"></i>
+                            </button>
+                            
+                            <button class="btn-ui btn-icon-glass delete" onclick="confirmDelete({{ video.id }})" data-tooltip="Excluir">
+                                <i class="ri-delete-bin-line"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

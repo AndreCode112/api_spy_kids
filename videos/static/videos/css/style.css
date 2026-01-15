@@ -67,8 +67,102 @@ button {
     transform: scale(1.05);
 }
 
+/* NEWdESIGN */
+.btn-ui {
+    border: none;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif; /* Fonte sugerida */
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Animação elástica suave */
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* --- Botão Principal (Assistir) --- 
+   Estilo: Inovador, Brilho suave, Gradiente sutil */
+.btn-primary-glass {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #fff;
+    padding: 10px 24px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary-glass i {
+    font-size: 18px;
+    transition: transform 0.3s ease;
+}
+
+.btn-primary-glass:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.15); /* Glow branco elegante */
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.btn-primary-glass:hover i {
+    transform: scale(1.2); /* Ícone cresce levemente */
+}
+
+/* --- Botões de Ícone (Editar/Excluir) --- 
+   Estilo: Clean, Minimalista */
+.btn-icon-glass {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.6);
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    font-size: 18px;
+}
+
+.btn-icon-glass:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+/* Estado de perigo específico para o Delete */
+.btn-icon-glass.delete:hover {
+    background: rgba(255, 71, 87, 0.15);
+    color: #ff4757;
+    box-shadow: 0 4px 12px rgba(255, 71, 87, 0.2);
+}
+
+/* --- Tooltip CSS (Inovação UX) --- 
+   Aparece ao passar o mouse sobre os ícones */
+.btn-icon-glass[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 4px 8px;
+    font-size: 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    animation: fadeIn 0.3s forwards;
+    pointer-events: none;
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; transform: translateX(-50%) translateY(-5px); }
+}
+
+
 /* Botões Primários (Ação) */
-.btn-action, .btn-play, .btn-watch-series, .btn-confirm {
+/* .btn-action, .btn-play, .btn-watch-series, .btn-confirm {
     background: var(--text-main);
     color: #000;
     padding: 10px 24px;
@@ -76,26 +170,26 @@ button {
     font-weight: 600;
     font-size: 14px;
     letter-spacing: 0.5px;
-}
+} */
 
-.btn-action:hover, .btn-play:hover {
+/* .btn-action:hover, .btn-play:hover {
     background: #e6e6e6;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
-}
+} */
 
 /* Botões Secundários/Destrutivos */
-.btn-delete, .btn-cancel {
+/* .btn-delete, .btn-cancel {
     background: rgba(255, 255, 255, 0.05);
     color: var(--text-main);
     padding: 8px 16px;
     border-radius: var(--radius-sm);
-}
+} */
 
-.btn-delete:hover {
+/* .btn-delete:hover {
     background: rgba(207, 102, 121, 0.2);
     color: var(--danger);
-}
+} */
 
 /* =========================================
    2. LAYOUT & HEADER
@@ -293,10 +387,21 @@ button {
 
 .video-actions {
     display: flex;
-    gap: 8px;
+    align-items: center;
+    justify-content: space-between; /* Ou flex-start dependendo do layout */
+    gap: 12px;
     margin-top: auto;
+    padding: 8px 0;
 }
 
+.actions-group {
+    display: flex;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.03); /* Fundo super sutil para agrupar */
+    padding: 4px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
 /* =========================================
    4. MODAIS E PAINÉIS FLUTUANTES
    ========================================= */
