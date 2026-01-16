@@ -15,25 +15,29 @@ class multipleDownloadVideos:
         self.status:int
         self.response:dict = {}
     
-    def zipped_files_generator(video_ids):
+    def zipped_files_generator(self, video_ids):
         videos = Video.objects.filter(id__in=video_ids)
         for video in videos:
             url_request = video.url_php_server + 'api_download_videos.php'
             params = {'file': video.file_Server}
             headers = {'Referer': settings.DOMAIN, 'User-Agent': 'DjangoBackend/1.0'}
             
-            r = requests.get(url_request, params=params, headers=headers, stream=True, timeout=15)
-            
-            if r.status_code == 200:
-                filename = f"{video.title or video.id}.mp4".replace('/', '_').replace('\\', '_')
+            try:
+                r = requests.get(url_request, params=params, headers=headers, stream=True, timeout=15)
                 
-                yield (
-                    filename, 
-                    datetime.now(), 
-                    0o600, 
-                    ZIP_64, 
-                    r.iter_content(chunk_size=8192) 
-                )
+                if r.status_code == 200:
+                    filename = f"{video.title or video.id}.mp4".replace('/', '_').replace('\\', '_')
+                    
+                    yield (
+                        filename, 
+                        datetime.now(), 
+                        0o600, 
+                        ZIP_64, 
+                        r.iter_content(chunk_size=8192) 
+                    )
+            except Exception:
+                continue
+
     def downloadListVideos(self, request:HttpRequest) -> bool:
         try:
             video_ids_str = request.POST.get('ids', '[]')
@@ -41,12 +45,11 @@ class multipleDownloadVideos:
             
             if not video_ids:
                 self.strErr = 'Nenhum vídeo foi selecionado para download'
-                self.status =  status.HTTP_400_BAD_REQUEST
+                self.status = status.HTTP_400_BAD_REQUEST
                 return False
             
-
             self.response = StreamingHttpResponse(
-                stream_zip(self.zipped_files_generator()), 
+                stream_zip(self.zipped_files_generator(video_ids)), 
                 content_type='application/zip'
             )
             
