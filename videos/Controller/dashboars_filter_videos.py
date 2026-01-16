@@ -5,8 +5,6 @@ from django.core.paginator import Paginator
 from django.utils.dateparse import parse_date
 from rest_framework import status
 
-
-
 class DashboardsFilterVideos:
     def __init__(self):
         self.StrErr:str = ''
@@ -21,6 +19,7 @@ class DashboardsFilterVideos:
 
             start_date_str = request.GET.get('start_date')
             end_date_str = request.GET.get('end_date')
+            check_update =  request.GET.get('check_update')
 
             if start_date_str:
                 start_date = parse_date(start_date_str)
@@ -32,12 +31,14 @@ class DashboardsFilterVideos:
                 if end_date:
                     videos_qs = videos_qs.filter(created_at__date__lte=end_date)
                     
-            if request.GET.get('check_update') == 'true':
+            if check_update == 'true':
                 latest_video = videos_qs.first()
                 latest_id = latest_video.id if latest_video else 0
                 self.response = {'latest_id': latest_id}
                 self.status = status.HTTP_200_OK
+                self.StrErr = ""
                 self.update_videos = True
+                return True
                 
             paginator = Paginator(videos_qs, 20) 
             page_number = request.GET.get('page', 1)
