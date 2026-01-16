@@ -4,6 +4,7 @@
 {% if history_groups %}
     {% for group in history_groups %}
     <div class="date-group mb-4" data-date-group="{{ group.date|date:'Y-m-d' }}">
+        
         <h3 class="date-header sticky-top bg-dark text-white p-2">
             {{ group.date|date:"d" }} de {{ group.date|date:"F, Y" }}
         </h3>
@@ -11,6 +12,12 @@
         <div class="video-grid">
             {% for video in group.videos %}
             <div class="video-card" data-video-id="{{ video.id }}">
+                
+                <div class="card-select-wrapper">
+                    <input type="checkbox" class="video-checkbox" value="{{ video.id }}" id="cb-{{ video.id }}" onchange="toggleSelection(this)">
+                    <label for="cb-{{ video.id }}" class="custom-checkbox"></label>
+                </div>
+
                 <div class="video-thumbnail">
                     <img src="{% static 'videos/thumbnail/spykids.jpg' %}" alt="Thumb Padrão" loading="lazy">
                     <div class="play-overlay" onclick="playVideo({{ video.id }}, '{{ group.date|date:'Y-m-d' }}')">▶</div>
@@ -70,6 +77,22 @@
         <p>Nenhum vídeo foi encontrado no momento.</p>
     </div>
 {% endif %}
+
+<div id="bulk-actions-bar" class="bulk-actions-bar">
+    <div class="bulk-info">
+        <span class="selected-count">0</span> selecionados
+        <button class="btn-text-only" onclick="clearSelection()">Limpar</button>
+    </div>
+    
+    <div class="bulk-buttons">
+        <button class="btn-ui btn-primary-glass" onclick="executeBulkDownload()">
+            <i class="ri-download-cloud-2-line"></i> Baixar Tudo
+        </button>
+        <button class="btn-ui btn-danger-glass" onclick="executeBulkDelete()">
+            <i class="ri-delete-bin-5-line"></i> Excluir
+        </button>
+    </div>
+</div>
 
 <script id="updated-video-json" type="application/json">
     {{ videos_json|safe|default:"[]" }}

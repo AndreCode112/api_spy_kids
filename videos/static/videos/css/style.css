@@ -1761,3 +1761,71 @@ button {
  from { opacity: 0; background-color: rgba(255, 255, 255, 0.2); transform: translateY(-10px); }
  to { opacity: 1; background-color: transparent; transform: translateY(0); }
  }
+
+
+ /* Checkbox Customizado no Card */
+.card-select-wrapper {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+    opacity: 0; /* Escondido por padrão */
+    transition: opacity 0.2s;
+}
+
+.video-card:hover .card-select-wrapper,
+.video-card.selected .card-select-wrapper {
+    opacity: 1; /* Aparece no hover ou se selecionado */
+}
+
+.video-card.selected {
+    border: 2px solid #e50914; /* Destaque visual */
+    transform: scale(0.98);
+}
+
+.custom-checkbox {
+    width: 20px;
+    height: 20px;
+    background: rgba(0,0,0,0.5);
+    border: 2px solid white;
+    border-radius: 4px;
+    display: block;
+    cursor: pointer;
+}
+
+.video-checkbox:checked + .custom-checkbox {
+    background: #e50914;
+    border-color: #e50914;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M10 15.172l9.192-9.193 1.415 1.414L10 18l-6.364-6.364 1.414-1.414z'/%3E%3C/svg%3E");
+}
+.video-checkbox { display: none; }
+
+/* Barra Flutuante */
+.bulk-actions-bar {
+    position: fixed;
+    bottom: -100px; /* Escondido */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 600px;
+    background: rgba(20, 20, 20, 0.9);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 1000;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.bulk-actions-bar.active {
+    bottom: 20px;
+}
+
+.bulk-info { color: white; font-weight: bold; display: flex; gap: 10px; align-items: center;}
+.btn-text-only { background: none; border: none; color: #aaa; cursor: pointer; text-decoration: underline; font-size: 0.9rem;}
+.bulk-buttons { display: flex; gap: 10px; }
+.btn-danger-glass { background: rgba(229, 9, 20, 0.2); color: #ff4757; border: 1px solid rgba(229, 9, 20, 0.3); padding: 8px 16px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 5px;}

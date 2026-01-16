@@ -5,6 +5,7 @@ from datetime import timedelta
 from .logs_notification import MensagensLogs
 from videos.Dto.notifyDto import notifyDto
 from videos.Dto.logDto import LogsDto
+
 class uploadVideoExtenalServer:
     def __init__(self):
         self.strErr:str = ''

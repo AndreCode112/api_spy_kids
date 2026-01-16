@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import (
-     video_gallery, stream_video, storage_info, device_info_connected , device_type_create_update, saveVideoAPi,deleteVideoAPi,config_device_audio_api, GetConfigDeviceApi, update_video_title, check_notifications, Get_consumer_logs, dashboard_logs, mark_all_read, InsertLogsApiApp, api_agendar_calcular_qtd_videos_in_hd, downloadVideoApi
+     video_gallery, stream_video, storage_info, device_info_connected , device_type_create_update, saveVideoAPi,deleteVideoAPi,config_device_audio_api, GetConfigDeviceApi, update_video_title, check_notifications, Get_consumer_logs, dashboard_logs, mark_all_read, InsertLogsApiApp, api_agendar_calcular_qtd_videos_in_hd, downloadVideoApi,deleteMultipleVideo, downloadMultipleVideos
 )
 from django.contrib.auth.views import LogoutView
 from .Controller.login_custom import CustomLoginView
@@ -18,6 +18,8 @@ urlpatterns = [
     
     path('video/<int:video_id>/download/', downloadVideoApi , name='delete_video'),
     path('video/<int:video_id>/delete/', deleteVideoAPi , name='delete_video'),
+    path('videos/delete_multi_videos/',deleteMultipleVideo , name='delete_multi_videos'),
+    path('videos/download_multi_zip/', downloadMultipleVideos , name='download_multi_videos'),
     
     path('video/<int:video_id>/stream/', stream_video, name='stream_video'),
     path('video/<int:video_id>/update_title/', update_video_title, name='update_video_title'),

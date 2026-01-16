@@ -19,7 +19,8 @@ from .Controller.dashboars_filter_videos import DashboardsFilterVideos
 from .Controller.consumer_logs_dashboard import ConsumerDashboardLog
 from .Controller.agendar_calcular_videos_in_hd import AgendarCalcularQtdVideosInHD
 from .Controller.api_server_new_video import uploadVideoExtenalServer
-
+from .Controller.multiple_delete_api import multipleDeleteApi
+from .Controller.multiple_download_api import multipleDownloadVideos
 from .Dto.logDto import LogsDto
 from .Dto.notifyDto import notifyDto
 
@@ -191,6 +192,54 @@ def deleteVideoAPi(request, video_id):
     }, status=instanceApiVideo.status)
 
 
+@login_required(login_url='/login/')
+@require_http_methods(["POST"])
+@api_view(['POST'])
+def deleteMultipleVideo(request):
+    instanceMultipleDeleteApi: multipleDeleteApi = multipleDeleteApi()
+    if not instanceMultipleDeleteApi._Delete_multi_videos(request):
+        instanceMensagensLogs = MensagensLogs()
+        mensagem_erro = instanceMultipleDeleteApi.strErr + ' lista de erros referente ao loop de exclusão de videos: ' + str(instanceMultipleDeleteApi.errors)
+
+        if not instanceMensagensLogs.execute_log_error(LogsDto.SERVER, mensagem_erro):
+           mensagem_erro +=  ' - ' + instanceMensagensLogs.strErr
+
+        if not instanceMensagensLogs.execute_notification('Foi detectado um erro ao tentar excluir múltiplos vídeos. Verifique os logs para mais detalhes..', notifyDto.error):
+            mensagem_erro +=  ' - ' + instanceMensagensLogs.strErr
+            
+           
+        return JsonResponse({
+            'success': False,
+            'message': mensagem_erro
+        }, status=instanceMultipleDeleteApi.status)
+    
+    return JsonResponse(instanceMultipleDeleteApi.response, status=instanceMultipleDeleteApi.status)
+
+
+
+@login_required(login_url='/login/')
+@require_http_methods(["POST"])
+@api_view(['POST'])
+def downloadMultipleVideos(request):
+    instancemultipleDownloadVideos: multipleDownloadVideos = multipleDownloadVideos()
+    if not instancemultipleDownloadVideos.downloadListVideos(request):
+        
+        instanceMensagensLogs = MensagensLogs()
+        mensagem_erro = instancemultipleDownloadVideos.strErr
+
+        if not instanceMensagensLogs.execute_log_error(LogsDto.SERVER, mensagem_erro):
+           mensagem_erro +=  ' - ' + instanceMensagensLogs.strErr
+
+        if not instanceMensagensLogs.execute_notification('Foi detectado um erro ao tentar realizar o download de múltiplos vídeos. Verifique os logs para mais detalhes..', notifyDto.error):
+            mensagem_erro +=  ' - ' + instanceMensagensLogs.strErr
+            
+        return JsonResponse({
+            'success': False,
+            'message': mensagem_erro
+        }, status=instancemultipleDownloadVideos.status)
+        
+    return JsonResponse(instancemultipleDownloadVideos.response, status=instancemultipleDownloadVideos.status)
+    
 
 @login_required(login_url='/login/')
 def check_notifications(request):
@@ -256,36 +305,6 @@ def GetConfigDeviceApi(request, hostname):
     
     return JsonResponse(instanceApiDeviceConfig.response, status=instanceApiDeviceConfig.status)
  
-
-
-
-#MetodoAntigo para salvar video via API
-# @require_http_methods(["POST"])
-# @api_view(['POST'])
-# def saveVideoAPi(request):
-#     instanceApiVideo: ApiVideo = ApiVideo()
-#     if not instanceApiVideo._Post(request):
-#         instanceMensagensLogs = MensagensLogs()
-#         mensagem_erro = instanceApiVideo.StrErr
-
-#         if not instanceMensagensLogs.execute_log_error(LogsDto.SERVER, mensagem_erro):
-#            mensagem_erro +=  ' - ' + instanceMensagensLogs.strErr
-
-#         if not instanceMensagensLogs.execute_notification('Foi detectada uma tentativa falha de um dispositivo ao salvar um vídeo. Verifique o log para mais detalhes', notifyDto.warning):
-#             mensagem_erro +=  ' - ' + instanceMensagensLogs.strErr
-
-
-#         return JsonResponse({
-#             'success': False,
-#             'message': mensagem_erro
-#         }, status=instanceApiVideo.status)
-    
-#     return JsonResponse({
-#         'success': True,
-#         'message': 'Vídeo salvo com sucesso'
-#     }, status=instanceApiVideo.status)
-
-
 @require_http_methods(["POST"])
 @api_view(['POST'])
 def saveVideoAPi(request):
@@ -311,9 +330,6 @@ def saveVideoAPi(request):
         'message': 'Vídeo salvo com sucesso'
     }, status=instanceUploadVideoExtenalServer.status)
     
-    
-    
-
 
 @require_http_methods(["POST"])
 @api_view(['POST'])
@@ -336,10 +352,6 @@ def config_device_audio_api(request, hostname):
     
     return JsonResponse(instanceApiAddStringAudio.response, status=instanceApiAddStringAudio.status)
    
-
-
-
-
 @login_required(login_url='/login/')
 @require_http_methods(["POST"])
 def mark_all_read(request):
@@ -363,9 +375,7 @@ def mark_all_read(request):
 
     return JsonResponse(instance_mark_all_read_notification.response)
 
-
-
-@login_required(login_url='/login/')
+s@login_required(login_url='/login/')
 @require_http_methods(["POST"])
 def api_agendar_calcular_qtd_videos_in_hd(request):
     instanceAgendarCalcularQtdVideosInHD: AgendarCalcularQtdVideosInHD =  AgendarCalcularQtdVideosInHD()
@@ -384,8 +394,6 @@ def api_agendar_calcular_qtd_videos_in_hd(request):
         }, status=instanceAgendarCalcularQtdVideosInHD.Status)
     
     return JsonResponse(instanceAgendarCalcularQtdVideosInHD.response)
-
-
 
 
 
