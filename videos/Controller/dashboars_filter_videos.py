@@ -34,17 +34,18 @@ class DashboardsFilterVideos:
             
             if mode == 'update':
                 client_last_id = int(request.GET.get('last_id', 0))
+                
+                new_videos_qs = videos_qs.filter(id__gt=client_last_id)
 
-                latest_video = videos_qs.first()
-                server_latest_id = latest_video.id if latest_video else 0
-
-                if server_latest_id <= client_last_id:
+                if not new_videos_qs.exists():
                      self.response = {'status': 'uptodate'}
                      self.status = status.HTTP_200_OK
                      self.update_videos = True
                      return True
 
-                paginator = Paginator(videos_qs, 20)
+                server_latest_id = new_videos_qs.first().id
+
+                paginator = Paginator(new_videos_qs, 50)
                 page_obj = paginator.get_page(1) 
 
                 history_groups = []

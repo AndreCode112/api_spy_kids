@@ -263,11 +263,14 @@ function updatePlaylistData(newVideos, replaceAll = false) {
         allVideosData = newVideos;
     } else {
         const existingIds = new Set(allVideosData.map(v => v.id));
-        const videosToAdd = newVideos.filter(v => !existingIds.has(v.id));
-        allVideosData = allVideosData.concat(videosToAdd);
+        const uniqueNewVideos = newVideos.filter(v => !existingIds.has(v.id));
+        
+        allVideosData = uniqueNewVideos.concat(allVideosData);
     }
+    
     allVideosData.sort((a, b) => b.id - a.id);
 }
+
 function toggleEdit(id) {
     const d = document.getElementById(`title-display-${id}`);
     const i = document.getElementById(`title-input-${id}`);
