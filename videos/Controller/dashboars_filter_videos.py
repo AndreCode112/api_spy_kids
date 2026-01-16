@@ -43,11 +43,8 @@ class DashboardsFilterVideos:
                      self.update_videos = True
                      return True
 
-                latest_video_obj = new_videos_qs.first()
-                server_latest_id = latest_video_obj.id
-
-                paginator = Paginator(new_videos_qs, 50)
-                page_obj = paginator.get_page(1) 
+                server_latest_id = new_videos_qs.first().id
+                page_obj = new_videos_qs 
 
                 history_groups = []
                 for date, group in groupby(page_obj, key=lambda x: x.created_at.date()):
@@ -83,8 +80,10 @@ class DashboardsFilterVideos:
                 self.update_videos = True 
                 return True
             
-            paginator = Paginator(videos_qs, 20) 
-            page_number = request.GET.get('page', 1)
+            total_items = videos_qs.count() or 1
+            paginator = Paginator(videos_qs, total_items) 
+            
+            page_number = 1
             page_obj = paginator.get_page(page_number)
             
             history_groups = []

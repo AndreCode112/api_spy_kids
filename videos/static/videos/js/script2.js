@@ -241,19 +241,65 @@ function changeSpeed(rate) {
     const player = document.getElementById('videoPlayer');
     if (player) player.playbackRate = parseFloat(rate);
 }
-
-function loadMoreVideos(pageNumber) {
+async function loadMoreVideos(pageNumber) {
     const btn = document.getElementById('btn-load-more');
     if(btn) { btn.innerText = "Carregando..."; btn.disabled = true; }
 
-    fetch(`?page=${pageNumber}`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-    .then(r => r.text())
-    .then(html => {
-        const c = document.getElementById('video-list-container');
-        if(c) c.insertAdjacentHTML('beforeend', html);
-        if(btn && btn.parentElement) btn.parentElement.remove();
-    })
-    .catch(e => console.error(e));
+    try {
+        // Busca a próxima página
+        const response = await fetch(`?page=${pageNumber}`, { 
+            headers: { 'X-Requested-With': 'XMLHttpRequest' } 
+        });
+        
+        if (response.ok) {
+            const html = await response.text();
+            const container = document.getElementById('video-list-container');
+            
+            // Parser para ler o HTML recebido
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newGroups = doc.querySelectorAll('.date-group');
+
+            newGroups.forEach(newGroup => {
+                const dateKey = newGroup.getAttribute('data-date-group'); // Requer a alteração no HTML que te passei antes
+                
+                // Verifica se já temos essa data na tela
+                // Pegamos o ÚLTIMO grupo com essa data (para garantir que adicionamos ao final)
+                const existingGroups = document.querySelectorAll(`.date-group[data-date-group="${dateKey}"]`);
+                const existingGroup = existingGroups.length > 0 ? existingGroups[existingGroups.length - 1] : null;
+
+                if (existingGroup) {
+                    // MÁGICA: A data já existe. Pegamos só os vídeos e movemos para o grupo existente.
+                    const existingGrid = existingGroup.querySelector('.video-grid');
+                    const newVideos = newGroup.querySelectorAll('.video-card');
+                    
+                    newVideos.forEach(video => {
+                        existingGrid.appendChild(video); // Adiciona ao final da grid
+                    });
+                } else {
+                    // Data nova, adiciona o grupo inteiro
+                    container.appendChild(newGroup);
+                }
+            });
+            
+            // Remove o botão antigo se vier um novo no HTML, ou atualiza a lógica de paginação
+            if(btn) btn.remove();
+            
+            // Procura se tem botão de "próxima página" no novo HTML e adiciona ao final
+            const newPagination = doc.querySelector('.pagination-container');
+            if (newPagination) container.after(newPagination);
+
+            // Lê o JSON de dados (se houver) para atualizar o player
+            const scriptTag = doc.getElementById('updated-video-json');
+            if (scriptTag) {
+                const newData = JSON.parse(scriptTag.textContent);
+                updatePlaylistData(newData, false);
+            }
+        }
+    } catch (error) {
+        console.error("Erro ao carregar mais:", error);
+        if(btn) { btn.innerText = "Erro ao carregar"; btn.disabled = false; }
+    }
 }
 
 function updatePlaylistData(newVideos, replaceAll = false) {
