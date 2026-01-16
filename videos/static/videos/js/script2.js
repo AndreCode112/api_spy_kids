@@ -256,11 +256,17 @@ function loadMoreVideos(pageNumber) {
     .catch(e => console.error(e));
 }
 
-function updatePlaylistData(newVideos) {
-    if (Array.isArray(newVideos)) {
-        allVideosData = allVideosData.concat(newVideos);
-        allVideosData.sort((a, b) => a.id - b.id);
+function updatePlaylistData(newVideos, replaceAll = false) {
+    if (!Array.isArray(newVideos)) return;
+
+    if (replaceAll) {
+        allVideosData = newVideos;
+    } else {
+        const existingIds = new Set(allVideosData.map(v => v.id));
+        const videosToAdd = newVideos.filter(v => !existingIds.has(v.id));
+        allVideosData = allVideosData.concat(videosToAdd);
     }
+    allVideosData.sort((a, b) => b.id - a.id);
 }
 
 function toggleEdit(id) {
