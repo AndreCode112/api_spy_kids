@@ -70,8 +70,6 @@
     </div>
 {% endif %}
 
-<script>
-    if (typeof updatePlaylistData === 'function') {
-        updatePlaylistData({{ videos_json|safe|default:"[]" }});
-    }
+<script id="updated-video-json" type="application/json">
+    {{ videos_json|safe|default:"[]" }}
 </script>

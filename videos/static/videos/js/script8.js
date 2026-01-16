@@ -51,26 +51,34 @@ async function checkForNewVideos() {
 
 async function refreshVideoList(currentParams) {
     const container = document.getElementById('video-list-container');
-
+    
     try {
         const response = await fetch(`${window.location.pathname}?${currentParams.toString()}`, {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
         });
 
         if (response.ok) {
             const html = await response.text();
+            
             container.innerHTML = html;
             
-            if (typeof updatePlaylistData === 'function') {
+            const scriptTag = document.getElementById('updated-video-json');
+            if (scriptTag) {
+                try {
+                    const newVideoData = JSON.parse(scriptTag.textContent);
+                    
+                    updatePlaylistData(newVideoData, true); 
+                    
+                    console.log("Playlist atualizada com sucesso. Total:", allVideosData.length);
+                } catch (e) {
+                    console.error("Erro ao ler JSON dos novos vídeos:", e);
+                }
             }
             
             showToast("Lista de vídeos atualizada!");
         }
     } catch (error) {
         console.error("Erro ao atualizar a lista:", error);
-    } finally {
     }
 }
 
