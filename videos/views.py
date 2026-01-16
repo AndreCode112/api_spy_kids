@@ -238,7 +238,7 @@ def downloadMultipleVideos(request):
             'message': mensagem_erro
         }, status=instancemultipleDownloadVideos.status)
         
-    return JsonResponse(instancemultipleDownloadVideos.response, status=instancemultipleDownloadVideos.status)
+    return instancemultipleDownloadVideos.response
     
 
 @login_required(login_url='/login/')
