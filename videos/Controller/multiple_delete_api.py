@@ -3,7 +3,7 @@ from django.conf import settings
 import requests
 from rest_framework import status
 from django.http import HttpRequest
-import json
+
 
 class multipleDeleteApi:
     def __init__(self):
@@ -15,14 +15,7 @@ class multipleDeleteApi:
     def _Delete_multi_videos(self, request: HttpRequest) -> bool:
         try:
             success_count: int = 0
-            try:
-                data = json.loads(request.body)
-            except json.JSONDecodeError:
-                self.strErr = "JSON inválido no corpo da requisição"
-                self.status = status.HTTP_400_BAD_REQUEST
-                return False
-
-            video_ids = data.get('ids', [])
+            video_ids = request.POST.get('ids', []) 
             
             if not video_ids:
                 self.strErr = "Lista de videos para deletar esta vazia"
