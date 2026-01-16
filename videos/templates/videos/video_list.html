@@ -1,8 +1,9 @@
 {% load static %}
 <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
 {% if history_groups %}
     {% for group in history_groups %}
-    <div class="date-group mb-4">
+    <div class="date-group mb-4" data-date-group="{{ group.date|date:'Y-m-d' }}">
         <h3 class="date-header sticky-top bg-dark text-white p-2">
             {{ group.date|date:"d" }} de {{ group.date|date:"F, Y" }}
         </h3>
@@ -37,7 +38,7 @@
                         {% widthratio video.duration.total_seconds 60 1 %} min
                     </div>
                     
-                   <div class="video-actions">
+                    <div class="video-actions">
                         <button class="btn-ui btn-primary-glass" onclick="playVideo({{ video.id }}, '{{ group.date|date:'Y-m-d' }}')">
                             <i class="ri-play-fill"></i>
                             <span>Assistir</span>

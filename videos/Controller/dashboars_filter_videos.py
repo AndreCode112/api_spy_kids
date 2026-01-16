@@ -34,7 +34,7 @@ class DashboardsFilterVideos:
             
             if mode == 'update':
                 client_last_id = int(request.GET.get('last_id', 0))
-                
+
                 new_videos_qs = videos_qs.filter(id__gt=client_last_id)
 
                 if not new_videos_qs.exists():
@@ -43,7 +43,8 @@ class DashboardsFilterVideos:
                      self.update_videos = True
                      return True
 
-                server_latest_id = new_videos_qs.first().id
+                latest_video_obj = new_videos_qs.first()
+                server_latest_id = latest_video_obj.id
 
                 paginator = Paginator(new_videos_qs, 50)
                 page_obj = paginator.get_page(1) 

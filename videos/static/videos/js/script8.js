@@ -11,7 +11,8 @@ function startSmartPolling() {
 }
 async function checkAndLoadNewVideos() {
     let lastKnownId = 0;
-        if (typeof allVideosData !== 'undefined' && allVideosData.length > 0) {
+    
+    if (typeof allVideosData !== 'undefined' && allVideosData.length > 0) {
         lastKnownId = Math.max(...allVideosData.map(v => v.id));
     } else {
         const firstCard = document.querySelector('.video-card');
@@ -30,42 +31,38 @@ async function checkAndLoadNewVideos() {
         if (response.ok) {
             const serverData = await response.json();
 
-            if (serverData.status === 'updated') {
-                console.log(`Novos vídeos detectados! Adicionando ${serverData.data.length} vídeos.`);
+            if (serverData.status === 'updated' && serverData.html.trim() !== "") {
+                console.log(`Novos vídeos recebidos. Processando...`);
 
                 const container = document.getElementById('video-list-container');
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(serverData.html, 'text/html');
                 
-                if (container && serverData.html) {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(serverData.html, 'text/html');
-                    const newGroups = doc.querySelectorAll('.date-group');
+                const newGroups = doc.querySelectorAll('.date-group');
 
-                    Array.from(newGroups).reverse().forEach(newGroup => {
-                        const newDateText = newGroup.querySelector('.date-header').innerText.trim();
-                        
-                        const existingHeader = Array.from(document.querySelectorAll('.date-header'))
-                            .find(h3 => h3.innerText.trim() === newDateText);
-                        
-                        if (existingHeader) {
-                            const existingGroup = existingHeader.closest('.date-group');
-                            const existingGrid = existingGroup.querySelector('.video-grid');
-                            const newVideos = newGroup.querySelectorAll('.video-card');
+                Array.from(newGroups).reverse().forEach(newGroup => {
+                    const dateKey = newGroup.getAttribute('data-date-group');
+                    
+                    const existingGroup = document.querySelector(`.date-group[data-date-group="${dateKey}"]`);
 
-                            Array.from(newVideos).reverse().forEach(videoCard => {
-                                videoCard.style.animation = "fadeInHighlight 1s ease";
-                                existingGrid.insertAdjacentElement('afterbegin', videoCard);
-                            });
-                        } else {
-                            newGroup.style.animation = "fadeInHighlight 1s ease";
-                            container.insertAdjacentElement('afterbegin', newGroup);
-                        }
-                    });
-                }
+                    if (existingGroup) {
+                        const grid = existingGroup.querySelector('.video-grid');
+                        const newVideos = newGroup.querySelectorAll('.video-card');
+
+                        Array.from(newVideos).reverse().forEach(video => {
+                            video.classList.add('new-video-anim'); 
+                            grid.insertAdjacentElement('afterbegin', video);
+                        });
+                    } else {
+                        newGroup.classList.add('new-video-anim');
+                        container.insertAdjacentElement('afterbegin', newGroup);
+                    }
+                });
 
                 if (typeof updatePlaylistData === 'function') {
-                    updatePlaylistData(serverData.data, false); 
+                    updatePlaylistData(serverData.data, false);
                 }
-            } 
+            }
         }
     } catch (e) {
         console.error("Erro no monitoramento:", e);
