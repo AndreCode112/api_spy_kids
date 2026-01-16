@@ -375,7 +375,7 @@ def mark_all_read(request):
 
     return JsonResponse(instance_mark_all_read_notification.response)
 
-s@login_required(login_url='/login/')
+@login_required(login_url='/login/')
 @require_http_methods(["POST"])
 def api_agendar_calcular_qtd_videos_in_hd(request):
     instanceAgendarCalcularQtdVideosInHD: AgendarCalcularQtdVideosInHD =  AgendarCalcularQtdVideosInHD()
