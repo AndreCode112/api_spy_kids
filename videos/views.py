@@ -44,6 +44,9 @@ def video_gallery(request):
         return JsonResponse({
             'message': mensagem_erro
         }, status=instanceDashboardsFilterVideos.status)
+        
+    if instanceDashboardsFilterVideos.update_videos:
+        return JsonResponse(instanceDashboardsFilterVideos.response)
 
     return render(request, instanceDashboardsFilterVideos.route, instanceDashboardsFilterVideos.response)
 

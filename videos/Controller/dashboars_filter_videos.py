@@ -13,9 +13,9 @@ class DashboardsFilterVideos:
         self.response:dict = {}
         self.route: str = ''
         self.status:int
+        self.update_videos:bool =False
 
     def _execute(self,request: HttpRequest):
-
         try:
             videos_qs = Video.objects.all().order_by('-created_at')
 
@@ -31,7 +31,14 @@ class DashboardsFilterVideos:
                 end_date = parse_date(end_date_str)
                 if end_date:
                     videos_qs = videos_qs.filter(created_at__date__lte=end_date)
-
+                    
+            if request.GET.get('check_update') == 'true':
+                latest_video = videos_qs.first()
+                latest_id = latest_video.id if latest_video else 0
+                self.response = {'latest_id': latest_id}
+                self.status = status.HTTP_200_OK
+                self.update_videos = True
+                
             paginator = Paginator(videos_qs, 20) 
             page_number = request.GET.get('page', 1)
             page_obj = paginator.get_page(page_number)
