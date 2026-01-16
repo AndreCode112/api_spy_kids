@@ -1,0 +1,4 @@
+concertar erro ao editar titulo.
+atualizar lista de vídeos automaticamente ao identificar um novo vídeo. de forma que mesmo que vc esteja assistindo um vídeo não atrapalhe.
+corrigir style de modais, como excluir e e editar títulos.
+cancelar plano, pois vc pode realizar download , pelo vídeo.

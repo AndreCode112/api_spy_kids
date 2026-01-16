@@ -67,9 +67,8 @@ def update_video_title(request, video_id):
         if not instanceMensagensLogs.execute_notification('Ocorreu um erro ao tentar editar o título do vídeo. Verifique o log para mais detalhes.', notifyDto.warning):
             mensagem_erro +=  ' - ' + instanceMensagensLogs.strErr
 
-        return JsonResponse(instanceeditVideoTitle.response, instanceeditVideoTitle.status)
-
-    return JsonResponse(instanceeditVideoTitle.response, instanceeditVideoTitle.status)
+        return JsonResponse(instanceeditVideoTitle.response, status=instanceeditVideoTitle.status)
+    return JsonResponse(instanceeditVideoTitle.response,  status=instanceeditVideoTitle.status)
     
 
 @login_required(login_url='/login/')
