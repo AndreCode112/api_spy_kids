@@ -1,53 +1,74 @@
-/**
- * Monitoramento de Novos Vídeos em Tempo Real
- */
-
 let pollingInterval = null;
-const CHECK_DELAY_MS = 10000; // Verifica a cada 10 segundos
+const POLL_TIME_MS = 3000;
 
-// Inicia o monitoramento quando a página carrega
 document.addEventListener('DOMContentLoaded', () => {
-    startVideoPolling();
+    startSmartPolling();
 });
 
-function startVideoPolling() {
+function startSmartPolling() {
     if (pollingInterval) clearInterval(pollingInterval);
-    pollingInterval = setInterval(checkForNewVideos, CHECK_DELAY_MS);
+    pollingInterval = setInterval(checkAndLoadNewVideos, POLL_TIME_MS);
 }
 
-async function checkForNewVideos() {
-    // 1. Descobrir qual o vídeo mais recente na tela atual
-    // Estamos procurando o atributo data-video-id do primeiro card
-    const firstVideoCard = document.querySelector('.video-card');
-    const currentLatestId = firstVideoCard ? parseInt(firstVideoCard.dataset.videoId) : 0;
-
-    // Preservar os filtros atuais da URL (datas, paginação, busca)
-    const currentParams = new URLSearchParams(window.location.search);
+async function checkAndLoadNewVideos() {
+    // 1. Descobrir qual o ID do vídeo mais recente que temos na memória
+    // Assumindo que allVideosData está ordenado (novos primeiro) ou usamos reduce
+    let lastKnownId = 0;
     
-    // Adicionar flag para checagem leve
-    const checkParams = new URLSearchParams(currentParams);
-    checkParams.set('check_update', 'true');
+    // Tenta pegar da variável global se existir e tiver dados
+    if (typeof allVideosData !== 'undefined' && allVideosData.length > 0) {
+        // Encontra o maior ID na lista atual
+        lastKnownId = Math.max(...allVideosData.map(v => v.id));
+    } else {
+        // Fallback: tenta pegar do atributo data-video-id do primeiro card no HTML
+        const firstCard = document.querySelector('.video-card');
+        if (firstCard) lastKnownId = parseInt(firstCard.dataset.videoId);
+    }
+    const params = new URLSearchParams(window.location.search);
+    params.set('mode', 'update');
+    params.set('last_id', lastKnownId); // Envia o ID pro Python decidir se processa
 
     try {
-        // 2. Consultar o servidor (Check Leve)
-        const response = await fetch(`${window.location.pathname}?${checkParams.toString()}`, {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
+        const response = await fetch(`${window.location.pathname}?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
         });
 
         if (response.ok) {
-            const data = await response.json();
-            const serverLatestId = data.latest_id;
+            const serverData = await response.json();
 
-            if (serverLatestId > currentLatestId) {
-                await refreshVideoList(currentParams);
+            // 3. Verifica o status retornado pelo Python
+            if (serverData.status === 'updated') {
+                console.log("Novos vídeos encontrados! Atualizando...");
+
+                // A. Atualiza o Visual (HTML)
+                const container = document.getElementById('video-list-container');
+                if (container) {
+                    container.innerHTML = serverData.html;
+                    
+                    // Pequeno efeito visual de "flash" para indicar atualização (opcional)
+                    container.style.opacity = '0.5';
+                    setTimeout(() => container.style.opacity = '1', 300);
+                }
+
+                // B. Atualiza os Dados do Player (CRUCIAL PARA O PLAY FUNCIONAR)
+                if (typeof updatePlaylistData === 'function') {
+                    // Passamos 'true' para substituir a lista antiga pela nova lista completa da página 1
+                    updatePlaylistData(serverData.data, true);
+                }
+                
+                // Notificação
+                if (typeof showToast === 'function') {
+                    showToast("Novos vídeos carregados!");
+                }
+            } else {
+                console.log("Sistema atualizado. Nenhum vídeo novo.");
             }
         }
-    } catch (error) {
-        console.error("Erro ao verificar novos vídeos:", error);
+    } catch (e) {
+        console.error("Erro no polling de vídeos:", e);
     }
 }
+<<<<<<< HEAD
 
 async function refreshVideoList(currentParams) {
     const container = document.getElementById('video-list-container');
@@ -119,3 +140,5 @@ style.innerHTML = `
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 `;
 document.head.appendChild(style);
+=======
+>>>>>>> unstable
