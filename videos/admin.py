@@ -89,7 +89,7 @@ class VideoAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ("Informações do Vídeo", {
-            "fields": ("file_Server", "duration", "processed")
+            "fields": ("file_Server", "duration", "url_php_server"),
         }),
         ("Datas", {
             "fields": ("created_at",),
