@@ -15,7 +15,7 @@ class multipleDeleteApi:
     def _Delete_multi_videos(self, request: HttpRequest) -> bool:
         try:
             success_count: int = 0
-            video_ids = request.POST.get('ids', []) 
+            video_ids = request.data['ids']
             
             if not video_ids:
                 self.strErr = "Lista de videos para deletar esta vazia"
