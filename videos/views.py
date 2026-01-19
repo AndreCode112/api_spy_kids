@@ -21,6 +21,7 @@ from .Controller.agendar_calcular_videos_in_hd import AgendarCalcularQtdVideosIn
 from .Controller.api_server_new_video import uploadVideoExtenalServer
 from .Controller.multiple_delete_api import multipleDeleteApi
 from .Controller.multiple_download_api import multipleDownloadVideos
+from .Controller.check_5_seconds_is_online import check_is_online
 from .Dto.logDto import LogsDto
 from .Dto.notifyDto import notifyDto
 
@@ -117,6 +118,33 @@ def device_info_connected(request):
         }, status=instanceDeviceInfoConnectedApi.status)
     
     return JsonResponse(instanceDeviceInfoConnectedApi.response, status=instanceDeviceInfoConnectedApi.status)
+
+
+
+@login_required(login_url='/login/')
+@require_http_methods(["GET"])
+@api_view(['GET'])
+def check_5_seconds_is_online(request):
+   instancecheck_is_online: check_is_online = check_is_online()
+   if not instancecheck_is_online.run():
+       mensagem_erro = instancecheck_is_online.strErr
+       instanceMensagensLogs = MensagensLogs()
+
+       if not instanceMensagensLogs.execute_log_error(LogsDto.SERVER, mensagem_erro):
+          mensagem_erro +=  ' - ' + instanceMensagensLogs.strErr
+
+       if not instanceMensagensLogs.execute_notification('Não foi possível verificar o status do dispositivo', notifyDto.error):
+           mensagem_erro +=  ' - ' + instanceMensagensLogs.strErr
+
+       return JsonResponse({
+           'success': False,
+           'message': mensagem_erro
+       }, status=instancecheck_is_online.status)
+
+   return JsonResponse({
+       'success': True,
+       'message': 'Status do dispositivo verificado com sucesso'
+   }, status=instancecheck_is_online.status)
 
 
 @login_required(login_url='/login/')
@@ -438,3 +466,4 @@ def InsertLogsApiApp(request):
         mensagem_erro +=  ' - ' + instanceMensagensLogs.strErr
 
     return JsonResponse({'Sucesso': True, 'mensagem': ''})
+

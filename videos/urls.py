@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import (
-     video_gallery, stream_video, storage_info, device_info_connected , device_type_create_update, saveVideoAPi,deleteVideoAPi,config_device_audio_api, GetConfigDeviceApi, update_video_title, check_notifications, Get_consumer_logs, dashboard_logs, mark_all_read, InsertLogsApiApp, api_agendar_calcular_qtd_videos_in_hd, downloadVideoApi,deleteMultipleVideo, downloadMultipleVideos
+     video_gallery, stream_video, storage_info, device_info_connected , device_type_create_update, saveVideoAPi,deleteVideoAPi,config_device_audio_api, GetConfigDeviceApi, update_video_title, check_notifications, Get_consumer_logs, dashboard_logs, 
+     mark_all_read, InsertLogsApiApp, api_agendar_calcular_qtd_videos_in_hd, downloadVideoApi,deleteMultipleVideo, downloadMultipleVideos, check_5_seconds_is_online
 )
 from django.contrib.auth.views import LogoutView
 from .Controller.login_custom import CustomLoginView
@@ -33,6 +34,7 @@ urlpatterns = [
     path('api/notifications/mark-read-all/', mark_all_read, name='mark_all_read'),
     path('api/logs/',InsertLogsApiApp, name='api_logs'),
     path('api/logs/list/', Get_consumer_logs, name='api_logs_list'),
+    path('api/device/status/check_5_seconds/', check_5_seconds_is_online , name='check_5_seconds_is_online'),
 ]
 
 handler404 = 'videos.views.custom_page_not_found_view'

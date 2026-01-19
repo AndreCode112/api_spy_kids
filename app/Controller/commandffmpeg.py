@@ -78,8 +78,12 @@ class CommandFFMPEG:
                 self.params.pathVideoUploadSave
             ])
 
-            result = subprocess.run(command, capture_output=True, text=True, encoding='utf-8')
-
+            result =  subprocess.run(
+                    command,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    creationflags=subprocess.CREATE_NO_WINDOW
+            )
             if result.returncode != 0:
                 logs(self.strErr).log_messageTxt()
                 return False
@@ -110,7 +114,8 @@ class CommandFFMPEG:
                 stderr=subprocess.PIPE,
                 text=True,
                 encoding='utf-8',
-                errors='ignore'
+                errors='ignore',
+                creationflags=subprocess.CREATE_NO_WINDOW
             )
 
             _, stderr = processo.communicate()

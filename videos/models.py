@@ -1,52 +1,6 @@
 from django.db import models
 from django.utils import timezone
 
-# class Video(models.Model):
-#     title = models.CharField(max_length=255, blank=True, null=True, verbose_name="Título") # Novo
-#     file = models.FileField(upload_to='videos/capturas/')
-#     thumbnail = models.ImageField(upload_to='videos/thumbnails/', blank=True, null=True) # Novo
-#     created_at = models.DateTimeField(default=timezone.now)
-#     duration = models.DurationField()
-#     processed = models.BooleanField(default=False)
-    
-#     class Meta:
-#         ordering = ['-created_at']
-
-#     def save(self, *args, **kwargs):
-#         if not self.title:
-#             self.title = f"Vídeo #{self.pk}" if self.pk else "Novo Vídeo"
-            
-#         super().save(*args, **kwargs)
-        
-#         # Gera thumbnail se não existir e o arquivo de vídeo existir
-#         if self.file and not self.thumbnail:
-#             self.generate_thumbnail()
-
-#     def generate_thumbnail(self):
-#         """Gera uma thumbnail usando FFmpeg"""
-#         try:
-#             video_path = self.file.path
-#             base_name = os.path.basename(video_path)
-#             thumb_name = os.path.splitext(base_name)[0] + '.jpg'
-#             thumb_rel_path = os.path.join('videos', 'thumbnails', thumb_name)
-#             thumb_full_path = os.path.join(settings.MEDIA_ROOT, 'videos', 'thumbnails', thumb_name)
-
-#             os.makedirs(os.path.dirname(thumb_full_path), exist_ok=True)
-
-#             cmd = [
-#                 'ffmpeg', '-y', '-i', video_path, 
-#                 '-ss', '00:00:01.000', '-vframes', '1', 
-#                 thumb_full_path
-#             ]
-#             subprocess.check_call(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
-#             # Salva o caminho no banco (sem chamar save() recursivamente)
-#             self.thumbnail.name = thumb_rel_path
-#             super().save(update_fields=['thumbnail'])
-#         except Exception as e:
-#             print(f"Erro ao gerar thumbnail: {e}")
-
-
 class Video(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True, verbose_name="Título")
    
@@ -66,36 +20,6 @@ class Video(models.Model):
     def get_video_url(self):
         base_url = "https://rcamgeo.com.br/api/api_get_videos.php"
         return f"{base_url}?file={self.file_Server}"
-    
-
-    
-    # def generate_thumbnail(self):
-    #     try:
-    #         video_path = self.file.path
-    #         base_name = os.path.basename(video_path)
-    #         thumb_name = os.path.splitext(base_name)[0] + '.jpg'
-
-    #         thumb_rel_path = os.path.join('videos', 'thumbnails', thumb_name)
-    #         thumb_full_path = os.path.join(settings.MEDIA_ROOT, thumb_rel_path)
-
-    #         default_thumb_path = os.path.join(
-    #             settings.MEDIA_ROOT,
-    #             'videos',
-    #             'thumbnails',
-    #             'default.jpg'
-    #         )
-
-    #         os.makedirs(os.path.dirname(thumb_full_path), exist_ok=True)
-
-    #         # Copia a imagem padrão
-    #         shutil.copy(default_thumb_path, thumb_full_path)
-
-    #         # Salva apenas o campo thumbnail
-    #         self.thumbnail.name = thumb_rel_path
-    #         super().save(update_fields=['thumbnail'])
-
-    #     except Exception as e:
-    #         print(f"Erro ao definir thumbnail padrão: {e}")
 
 
 class ConfiguracaoParaCalculoGravacao(models.Model):
